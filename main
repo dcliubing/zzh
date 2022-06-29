@@ -973,7 +973,74 @@ Wend
 Application.ScreenUpdating = True
  
 End Sub
+Sub 页面设置()
+'
+' 宏2 宏
+'
 
+'
+      snb = 1
+      
+      Do While snb <= Sheets.Count
+           
+      
+
+      
+
+
+Sheets(snb).Activate
+    Application.PrintCommunication = False
+
+
+    ActiveWindow.View = xlPageBreakPreview
+
+
+    With ActiveSheet.PageSetup
+
+
+
+
+
+        .CenterHorizontally = False
+        .CenterVertically = False
+
+
+
+        .LeftMargin = Application.InchesToPoints(0.4)
+        .RightMargin = Application.InchesToPoints(0.2)
+        .TopMargin = Application.InchesToPoints(0.78740157480315)
+        .BottomMargin = Application.InchesToPoints(0.393700787401575)
+        .HeaderMargin = Application.InchesToPoints(0.196850393700787)
+        .FooterMargin = Application.InchesToPoints(0.118110236220472)
+        
+        
+        
+        
+        
+        
+        
+
+
+
+
+
+        .OddAndEvenPagesHeaderFooter = False
+        .DifferentFirstPageHeaderFooter = False
+        .ScaleWithDocHeaderFooter = False
+        .AlignMarginsHeaderFooter = True
+  
+  
+
+  
+  
+  
+    End With
+          snb = snb + 1
+          Loop
+
+    Application.PrintCommunication = True
+
+End Sub
 
 Sub 电机信号处理()
 Application.ScreenUpdating = False
