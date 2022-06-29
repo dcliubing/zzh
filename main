@@ -1762,6 +1762,8 @@ UserForm3.Show 0
 'UserForm3.CommandButton2.Enabled = False
 'End If
 'End If
+ID = ActiveSheet.Index
+
  For Each sh In Worksheets    '数组
 sh.Select
 If sh.Visible = 0 Then
@@ -1774,6 +1776,8 @@ End If
 
 Next
 
+
+ActiveWorkbook.Sheets(ID).Select
 
 
 If InStr(ActiveSheet.Cells(33, 6).Value, "A212002897") > 0 Then
@@ -1798,8 +1802,32 @@ Else
     UserForm3.TextBox15.Value = .RightFooter
 End With
 End If
+
+
+
+
+
 Application.ScreenUpdating = True
 
+End Sub
+Sub 版次()
+    If InStr(ActiveSheet.Cells(28, 6), "B") > 0 Then
+        If InStr(ActiveSheet.Cells(29, 6), "版次") > 0 Then
+            ActiveSheet.Cells(28, 8).Value = "供征求意见"
+        ElseIf InStr(ActiveSheet.Cells(29, 6), "REV") > 0 Then
+            ActiveSheet.Cells(28, 8).Value = "ISSUED FOR COMMENTS"
+        End If
+    
+    ElseIf InStr(ActiveSheet.Cells(28, 6), "0") > 0 Then
+        If InStr(ActiveSheet.Cells(29, 6), "版次") > 0 Then
+            ActiveSheet.Cells(28, 8).Value = "供批准"
+        ElseIf InStr(ActiveSheet.Cells(29, 6), "REV") > 0 Then
+            ActiveSheet.Cells(28, 8).Value = "ISSUED FOR APPROVAL"
+        End If
+    End If
+If InStr(ActiveSheet.Cells(33, 6), "2002897") > 0 Then
+    ActiveSheet.Cells(33, 13).Value = ActiveSheet.Cells(28, 6).Value
+End If
 End Sub
 Sub 页眉页脚读取()
 On Error Resume Next
