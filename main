@@ -322,13 +322,13 @@ ID = ActiveSheet.Index
 
  For Each sh In Worksheets    '数组
 sh.Select
-If sh.Visible = 0 Then
+'If sh.Visible = 0 Then
 
-MsgBox "发现隐藏工作表：" & sh.Name
+'MsgBox "发现隐藏工作表：" & sh.Name
 
 sh.Visible = 1
 
-End If
+'End If
 
 Next
 
@@ -606,6 +606,11 @@ Sub 图纸目录()
     Next
    ' Range("A4").Resize(Cells(Rows.Count, 1).End(xlUp).Row, 2).ClearContents
    ' Range("A4").Resize(UBound(arr), 2) = brr
+   c = MsgBox("是否在当前单元格粘贴图纸目录", vbOKCancel)
+   If c = 2 Then
+   Exit Sub
+   Else
     ActiveCell.Resize(UBound(arr), 1) = brr
+    End If
 End Sub
 
