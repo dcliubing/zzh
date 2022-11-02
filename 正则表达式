@@ -1,0 +1,20 @@
+Sub textZZZZ()
+On Error Resume Next
+    Dim objRegEx As Object
+    Set objRegEx = CreateObject("vbscript.regexp")
+    objRegEx.Pattern = "-\d[A-Za-z]\d"
+    objRegEx.Global = True
+
+    
+
+    
+    
+For i = 2 To 629
+    mystring = ActiveSheet.Cells(i, 10).Value
+    'MsgBox mystring
+    Set objMH = objRegEx.Execute(mystring)
+    'MsgBox objMH(j)
+ActiveSheet.Cells(i, 6).Value = objMH(j)
+
+Next i
+End Sub
