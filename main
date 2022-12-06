@@ -4,7 +4,513 @@
  Dim arr77(1 To 10)
  Dim senu, toi As Integer
  Dim arr100(0 To 100)
+Sub 重复查询()
+Dim rng As Range, cell As Range
+Application.ScreenUpdating = False
+Set rng = Selection
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+For Each cell In rng
+If Application.WorksheetFunction.CountIf(rng, cell) > 1 Then cell.Interior.ColorIndex = 6
+Next
+Application.ScreenUpdating = True
+End Sub
 
+Sub 数据去重()
+  Dim Arr, Brr, a%, b%, Str1, Str2
+   Dim Dic As Object
+  Set Dic = CreateObject("scripting.dictionary")
+  Set Str1 = Application.InputBox("请选择要去重的数据区域", "选择数据", , , , , , 8)
+  Arr = Range(Str1.Address)
+  If Not IsArray(Arr) Then Exit Sub  '如果不存在数据源选项，则arr非数组，那么退出程序
+  For a = 1 To UBound(Arr, 1)
+       For b = 1 To UBound(Arr, 2)
+             If Arr(a, b) <> "" Then
+             Dic(Arr(a, b)) = "" '单元格非空，则装入字典
+             End If
+             Next
+ Next
+  Brr = Dic.keys
+  Set Str2 = Application.InputBox("请确定数据存放的单元格", "选择数据存放的单元格", , , , , , 8)
+ Range(Str2.Address).Resize(Dic.Count, 1) = Application.Transpose(Brr)
+  Set Dic = Nothing  '释放字典内存
+End Sub
+Sub qc()
+Dim Dic, Arr
+Dim i As Integer, r As Integer
+Dim Str As String
+r = ActiveSheet.Range("A65536").End(xlUp).Row
+If r = 1 Then Exit Sub '如果第一列没有数据那么退出程序
+Set Dic = CreateObject("scripting.dictionary") '创建字典对象
+For i = 1 To r '将第一列数据添加到字典的key值中
+Dic(CStr(Cells(i, 1))) = ""
+Next
+Arr = Dic.keys '返回字典key的数组
+Set Dic = Nothing '销毁对象
+ActiveCell.Resize(UBound(Arr) + 1, 1) = Application.Transpose(Arr)
+Str = Join(Arr, ",") '将数组中的内容显示为一字符串
+
+End Sub
+Sub CheckDuplicates()
+    Dim lastRow As Long
+    Dim i As Long
+    Dim j As Long
+    Dim value As String
+
+    '获取电子表格中的最后一行
+    lastRow = ActiveSheet.Cells(Rows.Count, 1).End(xlUp).Row
+
+    '循环遍历每一行
+    For i = 1 To lastRow
+        '获取当前行的值
+        value = ActiveSheet.Cells(i, 1).value
+
+        '循环遍历剩余的行
+        For j = i + 1 To lastRow
+            '如果找到重复的值，则高亮显示
+            If ActiveSheet.Cells(j, 1).value = value Then
+                ActiveSheet.Cells(j, 1).Interior.Color = vbRed
+            End If
+        Next j
+    Next i
+End Sub
+
+
+
+Sub Mydistinct()
+
+'vba编程学习与实践~看见星光
+
+Dim d As Object, Arr, Brr, i&, k&, s$
+
+Set d = CreateObject("ing.dictionary")
+
+'后期引用字典
+
+'d.CompareMode = vbTextCompare
+
+'不区分字母大小写
+
+Arr = Range("a1:a" & Cells(Rows.Count, 1).End(xlUp).Row)
+
+'数据源装入数组arr
+
+ReDim Brr(1 To UBound(Arr), 1 To 1)
+
+'声明一个数组brr放结果。
+
+For i = 2 To UBound(Arr)
+
+'标题行不要，从第2行开始遍历
+
+s = Arr(i, 1)
+
+'强制将数据转换成字符串类型，原因见小贴士
+
+If Not d.exists(s) Then
+
+d(s) = ""
+
+'如果字典中不存在s，则作为关键字装入字典
+
+k = k + 1
+
+'累加个数
+
+Brr(k, 1) = Arr(i, 1)
+
+'装入结果数组
+
+End If
+
+Next
+
+[c:c].ClearContents
+
+[c1] = "结果"
+
+With [c2].Resize(k, 1)
+
+.NumberFormat = "@"
+
+'设置文本格式，防止某些文本数值变形
+
+.value = Brr
+
+End With
+
+MsgBox "一共为你提取了：" & k & "个不重复值。"
+
+Set d = Nothing
+
+'释放字典
+
+End Sub
+Sub 电缆外径2()
+Application.ScreenUpdating = False
+Dim arr1, arr2, arr3
+    arr1 = Array("2-AON-1x2x1.5mm2", "2-AON-1x2x2.5mm2", "2-AIN-2x2x1.5mm2", "2-AIN-2x2x2.5mm2", "1-AIN-5x2x1.5mm2", "1-AIN-10x2x1.5mm2", "1-AIN-15x2x1.5mm2", "1-AIN-20x2x1.5mm2", "1-AIN-5x2x2.5mm2", "1-AIN-10x2x2.5mm2", "1-AIN-15x2x2.5mm2", "2-BON-1x2x1.5mm2", "2-BON-1x2x2.5mm2", "2-BON-1x3x1.5mm2", "2-BON-1x3x1.5mm2（防水）", "2-BIN-2x2x1.5mm2", "2-BIN-2x2x2.5mm2", "1-BIN-5x2x1.5mm2", "1-BIN-10x2x1.5mm2", "1-BIN-15x2x1.5mm2", "1-BIN-5x2x2.5mm2", "1-BIN-10x2x2.5mm2", "1-BIN-15x2x2.5mm2", "1-BIN-5x3x1.5mm2", "1-BIN-10x3x1.5mm2", "2-AIN-2x2x1.5mm2")
+    arr2 = Array("13.7mm", "14.5mm", "20.8mm", "22.2mm", "19.4mm", "27.2mm", "31.6mm", "35.4mm", "21.5mm", "30.4mm", "35.1mm", "15.4mm", "16.4mm", "16mm", "16.4mm", "23.4mm", "25.2mm", "22.9mm", "32.6mm", "37.7mm", "25.5mm", "36.4mm", "42.1mm", "26.4mm", "38mm", "22mm")
+    arr3 = Array("1/2" & """ NPTM", "1/2" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1/2" & """ NPTM", "1/2" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "2" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "3/4" & """ NPTM")
+  
+For i = 1 To 1000
+
+    For j = 0 To 25
+        
+       If ActiveSheet.Cells(i, 1).value = arr1(j) Then
+         
+            ActiveSheet.Cells(i, 2).value = arr2(j)
+            ActiveSheet.Cells(i, 3).value = arr3(j)
+         
+       End If
+    Next j
+
+Next i
+
+Application.ScreenUpdating = True
+
+Set arr1 = Nothing
+
+Set arr2 = Nothing
+
+Set arr3 = Nothing
+
+
+End Sub
+Sub 火气坐标()
+'
+' 宏3 宏
+'
+Application.ScreenUpdating = False
+ myarray = Range("A1:F608").value
+
+
+
+
+
+For i = LBound(myarray, 1) To UBound(myarray, 1)
+    For j = LBound(myarray, 2) To UBound(myarray, 2)
+        If j = 1 Then
+            ' 访问 myArray(i, j) 即可访问第二列的元素
+            
+            
+                          For Each cell In Selection
+                                 
+                            
+                                     If cell.value = myarray(i, j) Then
+                             
+                                          cell.Offset(, 1).value = myarray(i, j + 1)
+                                          cell.Offset(, 2).value = myarray(i, j + 2)
+                                          cell.Offset(, 3).value = myarray(i, j + 3)
+                                          cell.Offset(, 4).value = myarray(i, j + 4)
+                                          cell.Offset(, 5).value = myarray(i, j + 5)
+                                
+                             
+                                       End If
+                                 
+                    
+                                Next cell
+                                
+            
+            
+
+        End If
+    Next j
+Next i
+
+Application.ScreenUpdating = True
+'
+End Sub
+Sub 电缆外径()
+Application.ScreenUpdating = False
+Dim arr1, arr2, arr3
+Dim i As Range
+
+    arr1 = Array("2-AON-1x2x1.5mm2", "2-AON-1x2x2.5mm2", "2-AIN-2x2x1.5mm2", "2-AIN-2x2x2.5mm2", "1-AIN-5x2x1.5mm2", "1-AIN-10x2x1.5mm2", "1-AIN-15x2x1.5mm2", "1-AIN-20x2x1.5mm2", "1-AIN-5x2x2.5mm2", "1-AIN-10x2x2.5mm2", "1-AIN-15x2x2.5mm2", "2-BON-1x2x1.5mm2", "2-BON-1x2x2.5mm2", "2-BON-1x3x1.5mm2", "2-BON-1x3x1.5mm2（防水）", "2-BIN-2x2x1.5mm2", "2-BIN-2x2x2.5mm2", "1-BIN-5x2x1.5mm2", "1-BIN-10x2x1.5mm2", "1-BIN-15x2x1.5mm2", "1-BIN-5x2x2.5mm2", "1-BIN-10x2x2.5mm2", "1-BIN-15x2x2.5mm2", "1-BIN-5x3x1.5mm2", "1-BIN-10x3x1.5mm2")
+    arr2 = Array("13.7mm", "14.5mm", "20.8mm", "22.2mm", "19.4mm", "27.2mm", "31.6mm", "35.4mm", "21.5mm", "30.4mm", "35.1mm", "15.4mm", "16.4mm", "16mm", "16.4mm", "23.4mm", "25.2mm", "22.9mm", "32.6mm", "37.7mm", "25.5mm", "36.4mm", "42.1mm", "26.4mm", "38mm")
+   ' arr3 = Array("1/2" & """ NPTM", "1/2" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1/2" & """ NPTM", "1/2" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "2" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "3/4" & """ NPTM")
+  
+For Each cell In Selection
+    For j = 0 To 24
+        
+       If cell.value = arr1(j) Then
+         
+           cell.Offset(, 1).value = arr2(j)
+            'ActiveSheet.Cells(i, 3).Value = arr3(j)
+         
+       End If
+    Next j
+
+Next cell
+
+Application.ScreenUpdating = True
+
+Set arr1 = Nothing
+
+Set arr2 = Nothing
+
+Set arr3 = Nothing
+
+
+End Sub
+Sub 电缆表()
+Application.ScreenUpdating = False
+With ActiveSheet
+
+For i = 2 To 100
+If InStr(.Cells(i, 7).value, "15PR") > 0 Then
+
+ .Cells(i, 3).value = "1 1/2""NPT"
+ .Cells(i, 5).value = "1 1/2""NPT"
+ 
+ 
+   .Cells(i, 9).value = "OVERALL,INDIVIDUAL"
+
+If InStr(.Cells(i, 1).value, "A-") > 0 Or InStr(.Cells(i, 1).value, "D-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-15x2x1.5mm2"
+ .Cells(i, 8).value = "1.5mm2"
+ .Cells(i, 11).value = "35.2mm"
+ElseIf InStr(.Cells(i, 1).value, "P-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-15x2x2.5mm2"
+
+ .Cells(i, 8).value = "2.5mm2"
+ .Cells(i, 11).value = ""
+ End If
+
+ 
+ ElseIf InStr(.Cells(i, 7).value, "10PR") > 0 Then
+
+ .Cells(i, 3).value = "1 1/2""NPT"
+ .Cells(i, 5).value = "1 1/2""NPT"
+ 
+ 
+   .Cells(i, 9).value = "OVERALL,INDIVIDUAL"
+
+If InStr(.Cells(i, 1).value, "A-") > 0 Or InStr(.Cells(i, 1).value, "D-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-10x2x1.5mm2"
+ .Cells(i, 8).value = "1.5mm2"
+ .Cells(i, 11).value = "29.8mm"
+ElseIf InStr(.Cells(i, 1).value, "P-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-10x2x2.5mm2"
+
+ .Cells(i, 8).value = "2.5mm2"
+ .Cells(i, 11).value = "36.2mm"
+ End If
+
+ 
+ ElseIf InStr(.Cells(i, 7).value, "5PR") > 0 And InStr(.Cells(i, 7).value, "15PR") = 0 Then
+
+  .Cells(i, 3).value = "1 ""NPT"
+  .Cells(i, 5).value = "1 ""NPT"
+  
+  
+     .Cells(i, 9).value = "OVERALL,INDIVIDUAL"
+
+If InStr(.Cells(i, 1).value, "A-") > 0 Or InStr(.Cells(i, 1).value, "D-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-5x2x1.5mm2"
+ .Cells(i, 8).value = "1.5mm2"
+ .Cells(i, 11).value = "21.3mm"
+ElseIf InStr(.Cells(i, 1).value, "P-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-5x2x2.5mm2"
+
+ .Cells(i, 8).value = "2.5mm2"
+ .Cells(i, 11).value = "25.6mm"
+ End If
+
+  ElseIf InStr(.Cells(i, 7).value, "2PR") > 0 Then
+ .Cells(i, 3).value = "3/4 ""NPT"
+   .Cells(i, 5).value = "3/4 ""NPT"
+   
+   
+        .Cells(i, 9).value = "OVERALL,INDIVIDUAL"
+
+If InStr(.Cells(i, 1).value, "A-") > 0 Or InStr(.Cells(i, 1).value, "D-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-2x2x1.5mm2"
+ .Cells(i, 8).value = "1.5mm2"
+ .Cells(i, 11).value = "22.7mm"
+ElseIf InStr(.Cells(i, 1).value, "P-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-2x2x2.5mm2"
+
+ .Cells(i, 8).value = "2.5mm2"
+ .Cells(i, 11).value = "25.9mm"
+ End If
+
+    ElseIf InStr(.Cells(i, 7).value, "1PR") > 0 Then
+      .Cells(i, 3).value = "1/2 ""NPT"
+.Cells(i, 5).value = "1/2 ""NPT"
+
+
+     .Cells(i, 9).value = "OVERALL"
+
+If InStr(.Cells(i, 1).value, "A-") > 0 Or InStr(.Cells(i, 1).value, "D-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-1x2x1.5mm2"
+ .Cells(i, 8).value = "1.5mm2"
+ .Cells(i, 11).value = "15mm"
+  .Cells(i, 12).value = "10.6mm"
+ElseIf InStr(.Cells(i, 1).value, "P-") > 0 Then
+ .Cells(i, 6).value = "1-AIN-5x2x2.5mm2"
+ .Cells(i, 6).value = "1-AIN-5x2x2.5mm2"
+ .Cells(i, 8).value = "2.5mm2"
+ .Cells(i, 11).value = "16.4mm"
+  .Cells(i, 11).value = "12mm"
+ End If
+ End If
+
+
+
+
+Next i
+
+End With
+Application.ScreenUpdating = True
+End Sub
+Sub 电缆表2()
+Application.ScreenUpdating = False
+For i = 2 To 100
+If InStr(ActiveSheet.Cells(i, 7).value, "15PR") > 0 Then
+
+ ActiveSheet.Cells(i, 3).value = "1 1/2""NPT"
+ ActiveSheet.Cells(i, 5).value = "1 1/2""NPT"
+ 
+ 
+   ActiveSheet.Cells(i, 9).value = "OVERALL,INDIVIDUAL"
+If InStr(ActiveSheet.Cells(i, 4).value, "PCS") > 0 Or InStr(ActiveSheet.Cells(i, 4).value, "DCS") > 0 Then
+If InStr(ActiveSheet.Cells(i, 1).value, "A-") > 0 Or InStr(ActiveSheet.Cells(i, 1).value, "D-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-15x2x1.5mm2"
+ ActiveSheet.Cells(i, 8).value = "1.5mm2"
+ ActiveSheet.Cells(i, 11).value = "35.2mm"
+ElseIf InStr(ActiveSheet.Cells(i, 1).value, "P-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-15x2x2.5mm2"
+
+ ActiveSheet.Cells(i, 8).value = "2.5mm2"
+ ActiveSheet.Cells(i, 11).value = ""
+ End If
+ End If
+ 
+ ElseIf InStr(ActiveSheet.Cells(i, 7).value, "10PR") > 0 Then
+
+ ActiveSheet.Cells(i, 3).value = "1 1/2""NPT"
+ ActiveSheet.Cells(i, 5).value = "1 1/2""NPT"
+ 
+ 
+   ActiveSheet.Cells(i, 9).value = "OVERALL,INDIVIDUAL"
+If InStr(ActiveSheet.Cells(i, 4).value, "PCS") > 0 Or InStr(ActiveSheet.Cells(i, 4).value, "DCS") > 0 Then
+If InStr(ActiveSheet.Cells(i, 1).value, "A-") > 0 Or InStr(ActiveSheet.Cells(i, 1).value, "D-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-10x2x1.5mm2"
+ ActiveSheet.Cells(i, 8).value = "1.5mm2"
+ ActiveSheet.Cells(i, 11).value = "29.8mm"
+ElseIf InStr(ActiveSheet.Cells(i, 1).value, "P-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-10x2x2.5mm2"
+
+ ActiveSheet.Cells(i, 8).value = "2.5mm2"
+ ActiveSheet.Cells(i, 11).value = "36.2mm"
+ End If
+ End If
+ 
+ ElseIf InStr(ActiveSheet.Cells(i, 7).value, "5PR") > 0 And InStr(ActiveSheet.Cells(i, 7).value, "15PR") = 0 Then
+
+  ActiveSheet.Cells(i, 3).value = "1 ""NPT"
+  ActiveSheet.Cells(i, 5).value = "1 ""NPT"
+  
+  
+     ActiveSheet.Cells(i, 9).value = "OVERALL,INDIVIDUAL"
+If InStr(ActiveSheet.Cells(i, 4).value, "PCS") > 0 Or InStr(ActiveSheet.Cells(i, 4).value, "DCS") > 0 Then
+If InStr(ActiveSheet.Cells(i, 1).value, "A-") > 0 Or InStr(ActiveSheet.Cells(i, 1).value, "D-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-5x2x1.5mm2"
+ ActiveSheet.Cells(i, 8).value = "1.5mm2"
+ ActiveSheet.Cells(i, 11).value = "21.3mm"
+ElseIf InStr(ActiveSheet.Cells(i, 1).value, "P-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-5x2x2.5mm2"
+
+ ActiveSheet.Cells(i, 8).value = "2.5mm2"
+ ActiveSheet.Cells(i, 11).value = "25.6mm"
+ End If
+ End If
+  ElseIf InStr(ActiveSheet.Cells(i, 7).value, "2PR") > 0 Then
+ ActiveSheet.Cells(i, 3).value = "3/4 ""NPT"
+   ActiveSheet.Cells(i, 5).value = "3/4 ""NPT"
+   
+   
+        ActiveSheet.Cells(i, 9).value = "OVERALL,INDIVIDUAL"
+If InStr(ActiveSheet.Cells(i, 4).value, "PCS") > 0 Or InStr(ActiveSheet.Cells(i, 4).value, "DCS") > 0 Then
+If InStr(ActiveSheet.Cells(i, 1).value, "A-") > 0 Or InStr(ActiveSheet.Cells(i, 1).value, "D-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-2x2x1.5mm2"
+ ActiveSheet.Cells(i, 8).value = "1.5mm2"
+ ActiveSheet.Cells(i, 11).value = "22.7mm"
+ElseIf InStr(ActiveSheet.Cells(i, 1).value, "P-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-2x2x2.5mm2"
+
+ ActiveSheet.Cells(i, 8).value = "2.5mm2"
+ ActiveSheet.Cells(i, 11).value = "25.9mm"
+ End If
+ End If
+    ElseIf InStr(ActiveSheet.Cells(i, 7).value, "1PR") > 0 Then
+      ActiveSheet.Cells(i, 3).value = "1/2 ""NPT"
+ActiveSheet.Cells(i, 5).value = "1/2 ""NPT"
+
+
+     ActiveSheet.Cells(i, 9).value = "OVERALL"
+If InStr(ActiveSheet.Cells(i, 4).value, "PCS") > 0 Or InStr(ActiveSheet.Cells(i, 4).value, "DCS") > 0 Then
+If InStr(ActiveSheet.Cells(i, 1).value, "A-") > 0 Or InStr(ActiveSheet.Cells(i, 1).value, "D-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-1x2x1.5mm2"
+ ActiveSheet.Cells(i, 8).value = "1.5mm2"
+ ActiveSheet.Cells(i, 11).value = "15mm"
+  ActiveSheet.Cells(i, 12).value = "10.6mm"
+ElseIf InStr(ActiveSheet.Cells(i, 1).value, "P-") > 0 Then
+ ActiveSheet.Cells(i, 6).value = "1-AIN-5x2x2.5mm2"
+ ActiveSheet.Cells(i, 6).value = "1-AIN-5x2x2.5mm2"
+ ActiveSheet.Cells(i, 8).value = "2.5mm2"
+ ActiveSheet.Cells(i, 11).value = "16.4mm"
+  ActiveSheet.Cells(i, 11).value = "12mm"
+ End If
+ End If
+ End If
+
+
+
+Next i
+Application.ScreenUpdating = True
+End Sub
+Sub 分列对比()
+Application.ScreenUpdating = False
+    Dim Arr, d As Object, i%, j%
+    Dim rng As Range, cell As Range
+        Columns("A:B").Select
+    Range("B1").Activate
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    ioh = ActiveSheet.UsedRange.Rows.Count
+    Set rng = ActiveSheet.Range("A1:B" & ioh)
+For Each cell In rng
+If Application.WorksheetFunction.CountIf(rng, cell) = 1 Then cell.Interior.ColorIndex = 6
+Next
+    
+    
+   Arr = ActiveSheet.Range("A1:B" & ioh)
+    Set d = CreateObject("scripting.dictionary")
+    For i = 1 To UBound(Arr)
+        d(Arr(i, 1)) = ""
+    Next i
+    For j = 1 To UBound(Arr)
+        If d.exists(Arr(j, 2)) Then
+            d.Remove (Arr(j, 2))
+        Else
+            d(Arr(j, 2)) = ""
+        End If
+    Next j
+    If d.Count > 0 Then
+  '  [c1].Resize(d.Count, 1) = Application.Transpose(d.keys)
+    Else
+    MsgBox "未发现区别"
+    End If
+    Application.ScreenUpdating = True
+End Sub
 
 Sub 多行列墙贴()
 Application.ScreenUpdating = False
@@ -133,12 +639,12 @@ bay = senu
 
 If senu = 1 Then
 
-ActiveSheet.Cells(hang, iit).Value = arr3(1)
+ActiveSheet.Cells(hang, iit).value = arr3(1)
 
 Else
 
 For senu = senu To 1 Step -1
-ActiveSheet.Cells(hang, iit).Value = arr3(shi, 1)
+ActiveSheet.Cells(hang, iit).value = arr3(shi, 1)
 shi = shi + 1
 hang = hang + ActiveSheet.Cells(hang, iit).MergeArea.Rows.Count
 
@@ -244,9 +750,9 @@ Sheets(snb).Activate
 
 End Sub
 
-Function LastRow(sh As Worksheet)
+Function lastRow(sh As Worksheet)
     On Error Resume Next
-    LastRow = sh.Cells.Find(What:="*", _
+    lastRow = sh.Cells.Find(What:="*", _
                             After:=sh.Range("A1"), _
                             LookAt:=xlPart, _
                             LookIn:=xlFormulas, _
@@ -336,18 +842,18 @@ Next
 ActiveWorkbook.Sheets(ID).Select
 
 
-If InStr(ActiveSheet.Cells(33, 6).Value, "212002897") > 0 Then
+If InStr(ActiveSheet.Cells(33, 6).value, "212002897") > 0 Then
 Call 封页读取
 
 
 Else
  With ActiveSheet.PageSetup
-    UserForm3.TextBox10.Value = .LeftHeader
-    UserForm3.TextBox11.Value = .CenterHeader
-    UserForm3.TextBox12.Value = .RightHeader
-    UserForm3.TextBox13.Value = .LeftFooter
-    UserForm3.TextBox14.Value = .CenterFooter
-    UserForm3.TextBox15.Value = .RightFooter
+    UserForm3.TextBox10.value = .LeftHeader
+    UserForm3.TextBox11.value = .CenterHeader
+    UserForm3.TextBox12.value = .RightHeader
+    UserForm3.TextBox13.value = .LeftFooter
+    UserForm3.TextBox14.value = .CenterFooter
+    UserForm3.TextBox15.value = .RightFooter
 End With
 End If
 
@@ -361,26 +867,26 @@ End Sub
 Sub 版次()
     If InStr(ActiveSheet.Cells(28, 6), "B") > 0 Then
         If InStr(ActiveSheet.Cells(29, 6), "版次") > 0 Then
-            ActiveSheet.Cells(28, 8).Value = "供征求意见"
+            ActiveSheet.Cells(28, 8).value = "供征求意见"
         ElseIf InStr(ActiveSheet.Cells(29, 6), "REV") > 0 Then
-            ActiveSheet.Cells(28, 8).Value = "ISSUED FOR COMMENTS"
+            ActiveSheet.Cells(28, 8).value = "ISSUED FOR COMMENTS"
         End If
     
     ElseIf InStr(ActiveSheet.Cells(28, 6), "0") > 0 Then
         If InStr(ActiveSheet.Cells(29, 6), "版次") > 0 Then
-            ActiveSheet.Cells(28, 8).Value = "供批准"
+            ActiveSheet.Cells(28, 8).value = "供批准"
         ElseIf InStr(ActiveSheet.Cells(29, 6), "REV") > 0 Then
-            ActiveSheet.Cells(28, 8).Value = "ISSUED FOR APPROVAL"
+            ActiveSheet.Cells(28, 8).value = "ISSUED FOR APPROVAL"
         End If
     End If
 If InStr(ActiveSheet.Cells(33, 6), "2002897") > 0 Then
-    ActiveSheet.Cells(33, 13).Value = ActiveSheet.Cells(28, 6).Value
+    ActiveSheet.Cells(33, 13).value = ActiveSheet.Cells(28, 6).value
 End If
 End Sub
 Sub 页眉页脚读取()
 On Error Resume Next
 
-If InStr(ActiveSheet.Cells(33, 6).Value, "212002897") > 0 Then
+If InStr(ActiveSheet.Cells(33, 6).value, "212002897") > 0 Then
 
   Call 封页读取
   With ActiveSheet.PageSetup
@@ -394,12 +900,12 @@ End With
 
 Else
  With ActiveSheet.PageSetup
-    UserForm3.TextBox10.Value = .LeftHeader
-    UserForm3.TextBox11.Value = .CenterHeader
-    UserForm3.TextBox12.Value = .RightHeader
-    UserForm3.TextBox13.Value = .LeftFooter
-    UserForm3.TextBox14.Value = .CenterFooter
-    UserForm3.TextBox15.Value = .RightFooter
+    UserForm3.TextBox10.value = .LeftHeader
+    UserForm3.TextBox11.value = .CenterHeader
+    UserForm3.TextBox12.value = .RightHeader
+    UserForm3.TextBox13.value = .LeftFooter
+    UserForm3.TextBox14.value = .CenterFooter
+    UserForm3.TextBox15.value = .RightFooter
 End With
 End If
 End Sub
@@ -407,12 +913,12 @@ Sub 页眉页脚清空()
 On Error Resume Next
 
  With ActiveSheet.PageSetup
-    UserForm3.TextBox10.Value = ""
-    UserForm3.TextBox11.Value = ""
-    UserForm3.TextBox12.Value = ""
-    UserForm3.TextBox13.Value = ""
-    UserForm3.TextBox14.Value = ""
-    UserForm3.TextBox15.Value = ""
+    UserForm3.TextBox10.value = ""
+    UserForm3.TextBox11.value = ""
+    UserForm3.TextBox12.value = ""
+    UserForm3.TextBox13.value = ""
+    UserForm3.TextBox14.value = ""
+    UserForm3.TextBox15.value = ""
 End With
 
 End Sub
@@ -422,12 +928,12 @@ Sub 封页读取()
 
 
  With ActiveSheet.PageSetup
-    UserForm3.TextBox10.Value = ActiveSheet.Cells(6, 6).Value & ActiveSheet.Cells(7, 6).Value
-    UserForm3.TextBox11.Value = .CenterHeader
-    UserForm3.TextBox12.Value = ActiveSheet.Cells(33, 9).Value & " " & "REV" & ActiveSheet.Cells(33, 13).Value
-    UserForm3.TextBox13.Value = ActiveSheet.Cells(31, 8).Value & " " & ActiveSheet.Cells(32, 8).Value
-    UserForm3.TextBox14.Value = .CenterFooter
-    UserForm3.TextBox15.Value = "&P OF &N"
+    UserForm3.TextBox10.value = ActiveSheet.Cells(6, 6).value & ActiveSheet.Cells(7, 6).value
+    UserForm3.TextBox11.value = .CenterHeader
+    UserForm3.TextBox12.value = ActiveSheet.Cells(33, 9).value & " " & "REV" & ActiveSheet.Cells(33, 13).value
+    UserForm3.TextBox13.value = ActiveSheet.Cells(31, 8).value & " " & ActiveSheet.Cells(32, 8).value
+    UserForm3.TextBox14.value = .CenterFooter
+    UserForm3.TextBox15.value = "&P OF &N"
 
 End With
 
@@ -475,31 +981,31 @@ Dim sr
         End If
 For i = n To ActiveWorkbook.Sheets.Count
     With Sheets(i).PageSetup
-        .LeftHeader = UserForm3.TextBox10.Value
-        .CenterHeader = UserForm3.TextBox11.Value
+        .LeftHeader = UserForm3.TextBox10.value
+        .CenterHeader = UserForm3.TextBox11.value
       ' If InStr(.RightHeader, Chr(10)) > 0 Then
         
         
-.RightHeader = UserForm3.TextBox12.Value
+.RightHeader = UserForm3.TextBox12.value
         
         
      
         
         If InStr(.RightHeader, REV) > 0 Then
         
-       att = Replace(UserForm3.TextBox12.Value, "REV", "@REV")
+       att = Replace(UserForm3.TextBox12.value, "REV", "@REV")
        clatt = Application.WorksheetFunction.Clean(att)
        fen = Split(clatt, "@")
         .RightHeader = fen(0) & Chr(13) & fen(1)
-         UserForm3.TextBox12.Value = .RightHeader
+         UserForm3.TextBox12.value = .RightHeader
         End If
-        .LeftFooter = UserForm3.TextBox13.Value
-        .CenterFooter = UserForm3.TextBox14.Value
-        .RightFooter = UserForm3.TextBox15.Value
+        .LeftFooter = UserForm3.TextBox13.value
+        .CenterFooter = UserForm3.TextBox14.value
+        .RightFooter = UserForm3.TextBox15.value
     End With
 Next i
 
-If InStr(ActiveSheet.Cells(33, 6).Value, "212002897") > 0 Then
+If InStr(ActiveSheet.Cells(33, 6).value, "212002897") > 0 Then
   With ActiveSheet.PageSetup
 .LeftHeader = ""
 .CenterHeader = ""
@@ -536,8 +1042,8 @@ Function DirFiles(ByVal mypath, Optional ByVal fileStr = "*.*")
     If mypath Like "*\" Then '总是把传进来的路径处理成不带斜杠的数据
         mypath = Left(mypath, Len(mypath) - 1) '去掉最后的分隔符
     End If
-    Dim dic
-    Set dic = CreateObject("scripting.dictionary")
+    Dim Dic
+    Set Dic = CreateObject("scripting.dictionary")
     Dim fname, k
     fname = Dir(mypath & "\" & fileStr)
     k = 0
@@ -545,23 +1051,23 @@ Function DirFiles(ByVal mypath, Optional ByVal fileStr = "*.*")
         k = k + 1
         If fname Like fileStr Then '实现模糊搜索文件
         '这里可以自己定义搜索条件 暂时用like方法一般就是 *匹配模糊搜索
-             dic(k) = fname '写入第一个文件
+             Dic(k) = fname '写入第一个文件
         End If
         fname = Dir
     Loop
-    Dim brr
-    If dic.Count = 0 Then
-        ReDim brr(0, 0)
+    Dim Brr
+    If Dic.Count = 0 Then
+        ReDim Brr(0, 0)
     Else
-        ReDim brr(1 To dic.Count, 1 To 4) '1列纯文件名 2列完整文件名
-        For i = 1 To dic.Count
-            brr(i, 1) = dic(i) '纯文件名+后缀
-            brr(i, 2) = mypath & "\" & brr(i, 1)  '完整路径+文件名
-            brr(i, 3) = Left(brr(i, 1), InStrRev(brr(i, 1), ".") - 1) '不带后缀的文件名
-            brr(i, 4) = Mid(brr(i, 1), InStrRev(brr(i, 1), ".") + 1) '后缀
+        ReDim Brr(1 To Dic.Count, 1 To 4) '1列纯文件名 2列完整文件名
+        For i = 1 To Dic.Count
+            Brr(i, 1) = Dic(i) '纯文件名+后缀
+            Brr(i, 2) = mypath & "\" & Brr(i, 1)  '完整路径+文件名
+            Brr(i, 3) = Left(Brr(i, 1), InStrRev(Brr(i, 1), ".") - 1) '不带后缀的文件名
+            Brr(i, 4) = Mid(Brr(i, 1), InStrRev(Brr(i, 1), ".") + 1) '后缀
         Next
     End If
-    DirFiles = brr
+    DirFiles = Brr
      '返回结果字典
 End Function
 Sub 选择文件夹()
@@ -575,15 +1081,15 @@ Sub 选择文件夹()
     Call 图纸目录
 End Sub
 Sub 刷新文件()
-    arr = DirFiles(arr77(1))
-    If UBound(arr) = 0 Then Exit Sub
-    ReDim brr(1 To UBound(arr), 1 To 2)
-    For i = 1 To UBound(arr)
-        brr(i, 1) = arr(i, 3) '不带后缀的文件名
-        brr(i, 2) = IIf(arr(i, 4) = "", "", "." & arr(i, 4)) '后缀 无后缀的不加点
+    Arr = DirFiles(arr77(1))
+    If UBound(Arr) = 0 Then Exit Sub
+    ReDim Brr(1 To UBound(Arr), 1 To 2)
+    For i = 1 To UBound(Arr)
+        Brr(i, 1) = Arr(i, 3) '不带后缀的文件名
+        Brr(i, 2) = IIf(Arr(i, 4) = "", "", "." & Arr(i, 4)) '后缀 无后缀的不加点
     Next
     Range("A4").Resize(Cells(Rows.Count, 1).End(xlUp).Row, 2).ClearContents
-    Range("A4").Resize(UBound(arr), 2) = brr
+    Range("A4").Resize(UBound(Arr), 2) = Brr
 End Sub
 Sub 重命名()
     n = E8_LastRow([A1])
@@ -597,12 +1103,12 @@ Public Function E8_LastRow(rng As Range) '返回rng所在列的最后行数
 End Function
 Sub 图纸目录()
  Dim cc As String
-    arr = DirFiles(arr77(1))
-    If UBound(arr) = 0 Then Exit Sub
-    ReDim brr(1 To UBound(arr), 1 To 2)
-    For i = 1 To UBound(arr)
-        brr(i, 1) = arr(i, 3) '不带后缀的文件名
-        brr(i, 2) = IIf(arr(i, 4) = "", "", "." & arr(i, 4)) '后缀 无后缀的不加点
+    Arr = DirFiles(arr77(1))
+    If UBound(Arr) = 0 Then Exit Sub
+    ReDim Brr(1 To UBound(Arr), 1 To 2)
+    For i = 1 To UBound(Arr)
+        Brr(i, 1) = Arr(i, 3) '不带后缀的文件名
+        Brr(i, 2) = IIf(Arr(i, 4) = "", "", "." & Arr(i, 4)) '后缀 无后缀的不加点
     Next
    ' Range("A4").Resize(Cells(Rows.Count, 1).End(xlUp).Row, 2).ClearContents
    ' Range("A4").Resize(UBound(arr), 2) = brr
@@ -610,7 +1116,9 @@ Sub 图纸目录()
    If c = 2 Then
    Exit Sub
    Else
-    ActiveCell.Resize(UBound(arr), 1) = brr
+    ActiveCell.Resize(UBound(Arr), 1) = Brr
     End If
 End Sub
+
+
 
