@@ -1,0 +1,36 @@
+Sub 电缆统计()
+    Dim dict As Object ' 定义一个字典对象，用于去重
+    Set dict = CreateObject("Scripting.Dictionary") ' 创建字典对象
+
+    ' 获取最大行数
+    Dim maxRow As Long
+    maxRow = Cells(Rows.Count, 1).End(xlUp).Row
+
+    ' 遍历 A 列和 B 列的所有行
+    For i = 1 To maxRow
+        ' 获取 A 列第 i 行的单元格值
+        Dim aValue As String
+        aValue = Cells(i, 1).Value
+
+        ' 如果 A 列第 i 行的单元格非空，则将其加入字典
+        If aValue <> "" Then
+            If dict.Exists(aValue) Then
+                ' 如果 A 列第 i 行的单元格值已存在于字典中，则累加 B 列第 i 行的单元格值
+                dict(aValue) = dict(aValue) + Cells(i, 2).Value
+            Else
+                ' 如果 A 列第 i 行的单元格值不存在于字典中，则将其加入字典
+                dict(aValue) = Cells(i, 2).Value
+            End If
+        End If
+    Next i
+
+    ' 将字典中的值写入 C 列和 D 列
+    Dim j As Integer
+    j = 1
+    For Each Key In dict.Keys
+        Cells(j, 3).Value = Key
+        Cells(j, 4).Value = dict(Key)
+        j = j + 1
+    Next Key
+End Sub
+
