@@ -1,20 +1,26 @@
-Sub hookuptakeoff()
-Application.ScreenUpdating = False
+ Sub hookuptakeoff()
+   Application.ScreenUpdating = False
     Dim i As Long, j As Long
     Dim ws As Worksheet
-    Dim k As Long ' 用于记录当前复制到第五列的第几个单元格
+    Dim k As Long
 
     Set ws = ActiveSheet ' 当前工作表
-    k = 1 ' 初始化，从第五列第一个单元格开始复制
+    k = 1
 
-    For i = 1 To 40 ' 遍历第二列中的每个单元格
-        For j = 1 To 60 ' 遍历第四列中的每个单元格
-            If ws.Cells(j, 4) = ws.Cells(i, 2) Then
-                ' 将第二列这个单元格所在行的第一列单元格复制到第五列
-                ws.Cells(k, 5).Value = ws.Cells(i, 1).Value
-                ws.Cells(k, 6).Value = ws.Cells(j, 3).Value
-                ws.Cells(k, 7).Value = ws.Cells(j, 4).Value
-                k = k + 1 ' 更新复制到第五列的下一个单元格
+    For i = 1 To Cells(Rows.Count, 2).End(xlUp).Row
+        For j = 1 To Cells(Rows.Count, 10).End(xlUp).Row
+            If ws.Cells(j, 10) = ws.Cells(i, 2) Then
+               
+                ws.Cells(k, 15).value = ws.Cells(i, 1).value
+                ws.Cells(k, 16).value = ws.Cells(j, 3).value
+                ws.Cells(k, 17).value = ws.Cells(j, 4).value
+                ws.Cells(k, 18).value = ws.Cells(j, 5).value
+                ws.Cells(k, 19).value = ws.Cells(j, 6).value
+                ws.Cells(k, 20).value = ws.Cells(j, 7).value
+                ws.Cells(k, 21).value = ws.Cells(j, 8).value
+                ws.Cells(k, 22).value = ws.Cells(j, 9).value
+                ws.Cells(k, 23).value = ws.Cells(j, 10).value
+                k = k + 1
             End If
         Next j
     Next i
