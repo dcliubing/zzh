@@ -4,6 +4,140 @@
  Dim arr77(1 To 10)
  Dim senu, toi As Integer
  Dim arr100(0 To 100)
+ Sub 电缆统计()
+    Dim dict As Object ' 定义一个字典对象，用于去重
+    Set dict = CreateObject("Scripting.Dictionary") ' 创建字典对象
+
+    ' 获取最大行数
+    Dim maxRow As Long
+    maxRow = Cells(Rows.Count, 1).End(xlUp).Row
+
+    ' 遍历 A 列和 B 列的所有行
+    For i = 1 To maxRow
+        ' 获取 A 列第 i 行的单元格值
+        Dim aValue As String
+        aValue = Cells(i, 1).value
+
+        ' 如果 A 列第 i 行的单元格非空，则将其加入字典
+        If aValue <> "" Then
+            If dict.Exists(aValue) Then
+                ' 如果 A 列第 i 行的单元格值已存在于字典中，则累加 B 列第 i 行的单元格值
+                dict(aValue) = dict(aValue) + Cells(i, 2).value
+            Else
+                ' 如果 A 列第 i 行的单元格值不存在于字典中，则将其加入字典
+                dict(aValue) = Cells(i, 2).value
+            End If
+        End If
+    Next i
+
+    ' 将字典中的值写入 C 列和 D 列
+    Dim j As Integer
+    j = 1
+    For Each Key In dict.Keys
+        Cells(j, 3).value = Key
+        Cells(j, 4).value = dict(Key)
+        j = j + 1
+    Next Key
+End Sub
+
+ Sub hookuptakeoff()
+   Application.ScreenUpdating = False
+    Dim i As Long, j As Long
+    Dim ws As Worksheet
+    Dim k As Long
+
+    Set ws = ActiveSheet ' 当前工作表
+    k = 1
+
+    For i = 1 To Cells(Rows.Count, 2).End(xlUp).Row
+    
+        For j = 1 To Cells(Rows.Count, 10).End(xlUp).Row
+      
+            If ws.Cells(j, 10) = ws.Cells(i, 2) Then
+               
+                ws.Cells(k, 15).value = ws.Cells(i, 1).value
+                ws.Cells(k, 16).value = ws.Cells(j, 3).value
+                ws.Cells(k, 17).value = ws.Cells(j, 4).value
+                ws.Cells(k, 18).value = ws.Cells(j, 5).value
+                ws.Cells(k, 19).value = ws.Cells(j, 6).value
+                ws.Cells(k, 20).value = ws.Cells(j, 7).value
+                ws.Cells(k, 21).value = ws.Cells(j, 8).value
+                ws.Cells(k, 22).value = ws.Cells(j, 9).value
+                ws.Cells(k, 23).value = ws.Cells(j, 10).value
+                k = k + 1
+            End If
+        Next j
+    Next i
+    Application.ScreenUpdating = True
+End Sub
+Sub 选定区域去重()
+    ' 定义变量
+    On Error Resume Next
+    Dim dataRange As Range   ' 选定区域
+    Dim dataArray() As Variant   ' 数据数组
+    Dim dataDict As Object   ' 数据字典
+    Dim dataValue As Variant   ' 数据项
+    Dim targetCell As Range   ' 目标单元格
+
+    ' 获取选定区域
+    Set dataRange = Application.Selection
+
+    ' 读取选定区域的数据
+    dataArray = dataRange.value
+
+    ' 创建数据字典
+    Set dataDict = CreateObject("Scripting.Dictionary")
+
+    ' 将数据数组中的每一个数据项作为键值对存储到字典中
+    For Each dataValue In dataArray
+    If Not IsEmpty(dataValue) Then
+        dataDict(dataValue) = True
+        End If
+    Next dataValue
+
+    ' 获取目标单元格
+    Set targetCell = Application.InputBox("选择一个单元格作为输出位置：", "输出位置", Type:=8)
+
+    ' 将字典中的键值列表写入目标单元格
+    targetCell.Resize(dataDict.Count, 1).value = Application.Transpose(dataDict.Keys)
+End Sub
+
+Sub 去重统计()
+    Dim dict As Object ' 定义一个字典对象，用于去重
+    Set dict = CreateObject("Scripting.Dictionary") ' 创建字典对象
+
+    ' 获取最大行数
+    Dim maxRow As Long
+    maxRow = Cells(Rows.Count, 1).End(xlUp).Row
+
+    ' 遍历 A 列和 B 列的所有行
+    For i = 1 To maxRow
+        ' 获取 A 列第 i 行的单元格值
+        Dim aValue As String
+        aValue = Cells(i, 1).value
+
+        ' 如果 A 列第 i 行的单元格非空，则将其加入字典
+        If aValue <> "" Then
+            If dict.Exists(aValue) Then
+                ' 如果 A 列第 i 行的单元格值已存在于字典中，则累加 B 列第 i 行的单元格值
+                dict(aValue) = dict(aValue) + Cells(i, 2).value
+            Else
+                ' 如果 A 列第 i 行的单元格值不存在于字典中，则将其加入字典
+                dict(aValue) = Cells(i, 2).value
+            End If
+        End If
+    Next i
+
+    ' 将字典中的值写入 C 列和 D 列
+    Dim j As Integer
+    j = 1
+    For Each Key In dict.Keys
+        Cells(j, 3).value = Key
+        Cells(j, 4).value = dict(Key)
+        j = j + 1
+    Next Key
+End Sub
+
 Sub 重复查询()
 Dim rng As Range, cell As Range
 Application.ScreenUpdating = False
@@ -33,7 +167,7 @@ Sub 数据去重()
              End If
              Next
  Next
-  Brr = Dic.keys
+  Brr = Dic.Keys
   Set Str2 = Application.InputBox("请确定数据存放的单元格", "选择数据存放的单元格", , , , , , 8)
  Range(Str2.Address).Resize(Dic.Count, 1) = Application.Transpose(Brr)
   Set Dic = Nothing  '释放字典内存
@@ -48,7 +182,7 @@ Set Dic = CreateObject("scripting.dictionary") '创建字典对象
 For i = 1 To r '将第一列数据添加到字典的key值中
 Dic(CStr(Cells(i, 1))) = ""
 Next
-Arr = Dic.keys '返回字典key的数组
+Arr = Dic.Keys '返回字典key的数组
 Set Dic = Nothing '销毁对象
 ActiveCell.Resize(UBound(Arr) + 1, 1) = Application.Transpose(Arr)
 Str = Join(Arr, ",") '将数组中的内容显示为一字符串
@@ -110,7 +244,7 @@ s = Arr(i, 1)
 
 '强制将数据转换成字符串类型，原因见小贴士
 
-If Not d.exists(s) Then
+If Not d.Exists(s) Then
 
 d(s) = ""
 
@@ -231,7 +365,7 @@ Dim i As Range
 
     arr1 = Array("2-AON-1x2x1.5mm2", "2-AON-1x2x2.5mm2", "2-AIN-2x2x1.5mm2", "2-AIN-2x2x2.5mm2", "1-AIN-5x2x1.5mm2", "1-AIN-10x2x1.5mm2", "1-AIN-15x2x1.5mm2", "1-AIN-20x2x1.5mm2", "1-AIN-5x2x2.5mm2", "1-AIN-10x2x2.5mm2", "1-AIN-15x2x2.5mm2", "2-BON-1x2x1.5mm2", "2-BON-1x2x2.5mm2", "2-BON-1x3x1.5mm2", "2-BON-1x3x1.5mm2（防水）", "2-BIN-2x2x1.5mm2", "2-BIN-2x2x2.5mm2", "1-BIN-5x2x1.5mm2", "1-BIN-10x2x1.5mm2", "1-BIN-15x2x1.5mm2", "1-BIN-5x2x2.5mm2", "1-BIN-10x2x2.5mm2", "1-BIN-15x2x2.5mm2", "1-BIN-5x3x1.5mm2", "1-BIN-10x3x1.5mm2")
     arr2 = Array("13.7mm", "14.5mm", "20.8mm", "22.2mm", "19.4mm", "27.2mm", "31.6mm", "35.4mm", "21.5mm", "30.4mm", "35.1mm", "15.4mm", "16.4mm", "16mm", "16.4mm", "23.4mm", "25.2mm", "22.9mm", "32.6mm", "37.7mm", "25.5mm", "36.4mm", "42.1mm", "26.4mm", "38mm")
-   ' arr3 = Array("1/2" & """ NPTM", "1/2" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1/2" & """ NPTM", "1/2" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "2" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "3/4" & """ NPTM")
+    arr3 = Array("1/2" & """ NPTM", "1/2" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1/2" & """ NPTM", "1/2" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "3/4" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "1-1/2" & """ NPTM", "2" & """ NPTM", "1" & """ NPTM", "1-1/2" & """ NPTM", "3/4" & """ NPTM")
   
 For Each cell In Selection
     For j = 0 To 24
@@ -239,7 +373,7 @@ For Each cell In Selection
        If cell.value = arr1(j) Then
          
            cell.Offset(, 1).value = arr2(j)
-            'ActiveSheet.Cells(i, 3).Value = arr3(j)
+           cell.Offset(, 2).value = arr3(j)
          
        End If
     Next j
@@ -498,7 +632,7 @@ Next
         d(Arr(i, 1)) = ""
     Next i
     For j = 1 To UBound(Arr)
-        If d.exists(Arr(j, 2)) Then
+        If d.Exists(Arr(j, 2)) Then
             d.Remove (Arr(j, 2))
         Else
             d(Arr(j, 2)) = ""
@@ -982,6 +1116,10 @@ Dim sr
 For i = n To ActiveWorkbook.Sheets.Count
     With Sheets(i).PageSetup
         .LeftHeader = UserForm3.TextBox10.value
+               att2 = Replace(UserForm3.TextBox10.value, Chr(10), "@")
+       clatt2 = Application.WorksheetFunction.Clean(att2)
+       fen = Split(clatt2, "@")
+       .LeftHeader = fen(0) & Chr(13) & fen(1)
         .CenterHeader = UserForm3.TextBox11.value
       ' If InStr(.RightHeader, Chr(10)) > 0 Then
         
