@@ -1,0 +1,25 @@
+Sub dsmch()
+Dim arr, brr, d, i&, s&, zf$
+Set d = CreateObject("scripting.dictionary")
+arr = Range("b1").CurrentRegion
+ReDim brr(1 To UBound(arr), 1 To 5)
+For i = 2 To UBound(arr)
+    zf = arr(i, 1) & "," & arr(i, 2) & "," & arr(i, 3) & "," & arr(i, 4)
+    If Not d.exists(zf) Then
+        s = s + 1
+        d(zf) = s
+        brr(s, 1) = arr(i, 1)
+        brr(s, 2) = arr(i, 2)
+        brr(s, 3) = arr(i, 3)
+        brr(s, 4) = arr(i, 4)
+        brr(s, 5) = arr(i, 5)
+    Else
+        n = d(zf)
+        brr(n, 5) = brr(n, 5) + arr(i, 5)
+    End If
+Next
+[h:l] = ""
+[h1:l1] = Array("加工图号", "长度", "数量")
+Range("h2").Resize(s, 5) = brr
+Range("h1").CurrentRegion.Sort [h1], , , , , , , xlGuess
+End Sub
