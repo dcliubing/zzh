@@ -1,29 +1,30 @@
 Sub dsmch()
-Dim arr, brr, d, i&, s&, zf$
+Dim arr, arr2, brr, d, i&, s&, zf$
 Set d = CreateObject("scripting.dictionary")
 lrow = ActiveSheet.UsedRange.Rows.Count
 lcol = ActiveSheet.UsedRange.Columns.Count
+For ii = 13 To 13 + lcol
+    Columns(ii).Clear
+Next ii
 
 arr = Range(Cells(1, 1), Cells(lrow, lcol))
-'ReDim arr(1 To lrow, 1 To lcol)
+arr2 = Range(Cells(1, 1), Cells(lrow, lcol - 1))
 ReDim brr(1 To lrow, 1 To lcol)
 For i = 2 To lrow
-    zf = arr(i, 1) & "," & arr(i, 2) & "," & arr(i, 3) & "," & arr(i, 4)
-    If Not d.exists(zf) Then
+    zf = Join(Application.Index(arr2, i), ",")
+        If Not d.exists(zf) Then
         s = s + 1
         d(zf) = s
-        brr(s, 1) = arr(i, 1)
-        brr(s, 2) = arr(i, 2)
-        brr(s, 3) = arr(i, 3)
-        brr(s, 4) = arr(i, 4)
-        brr(s, 5) = arr(i, 5)
+            For j = 1 To lcol
+              brr(s, j) = arr(i, j)
+            Next j
     Else
         n = d(zf)
-        brr(n, 5) = brr(n, 5) + arr(i, 5)
+        brr(n, lcol) = brr(n, lcol) + arr(i, lcol)
     End If
 Next
 '[h:l] = ""
-'[h1:l1] = Array("", "", "")
-Range("h2").Resize(s, 5) = brr
+'[h1:l1] = Array("加工图号", "长度", "数量")
+Range("m2").Resize(s, lcol) = brr
 'Range("h1").CurrentRegion.Sort [h1], , , , , , , xlGuess
 End Sub
