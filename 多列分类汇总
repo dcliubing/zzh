@@ -1,9 +1,13 @@
 Sub dsmch()
 Dim arr, brr, d, i&, s&, zf$
 Set d = CreateObject("scripting.dictionary")
-arr = Range("b1").CurrentRegion
-ReDim brr(1 To UBound(arr), 1 To 5)
-For i = 2 To UBound(arr)
+lrow = ActiveSheet.UsedRange.Rows.Count
+lcol = ActiveSheet.UsedRange.Columns.Count
+
+arr = Range(Cells(1, 1), Cells(lrow, lcol))
+'ReDim arr(1 To lrow, 1 To lcol)
+ReDim brr(1 To lrow, 1 To lcol)
+For i = 2 To lrow
     zf = arr(i, 1) & "," & arr(i, 2) & "," & arr(i, 3) & "," & arr(i, 4)
     If Not d.exists(zf) Then
         s = s + 1
@@ -18,8 +22,8 @@ For i = 2 To UBound(arr)
         brr(n, 5) = brr(n, 5) + arr(i, 5)
     End If
 Next
-[h:l] = ""
-[h1:l1] = Array("加工图号", "长度", "数量")
+'[h:l] = ""
+'[h1:l1] = Array("", "", "")
 Range("h2").Resize(s, 5) = brr
-Range("h1").CurrentRegion.Sort [h1], , , , , , , xlGuess
+'Range("h1").CurrentRegion.Sort [h1], , , , , , , xlGuess
 End Sub
