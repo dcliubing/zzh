@@ -1,0 +1,20 @@
+Sub CompareAndCopy()
+    Dim lastRow As Long
+    Dim i As Long, j As Long
+    
+    ' 获取最后一行的行号
+    lastRow = Cells(Rows.Count, 1).End(xlUp).Row
+    
+    ' 遍历A列和B列
+    For i = 1 To lastRow
+        For j = 1 To lastRow
+            ' 检查B列中的单元格是否与A列中的单元格相同
+            If Cells(j, 2).Value = Cells(i, 1).Value Then
+                ' 复制C列中相同行的内容到D列
+                Cells(i, 4).Value = Cells(j, 3).Value
+                ' 退出内部循环，继续下一行比较
+                Exit For
+            End If
+        Next j
+    Next i
+End Sub
