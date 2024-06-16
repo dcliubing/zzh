@@ -1,0 +1,121 @@
+
+
+Sub CopyPRData()
+    ' 定义静态变量，用于在多个调用之间保留数据
+    Static dataArray(1 To 25) As Variant
+    Static dataCaptured As Boolean
+    
+    Dim ws As Worksheet
+    Dim selectedCell As Range
+    Dim i As Integer
+    Dim targetSheet As Worksheet
+
+    ' 获取当前工作表和选中单元格
+    Set ws = ActiveSheet
+    Set selectedCell = Selection
+
+    ' 如果尚未捕获数据，进行数据捕获
+    If Not dataCaptured Then
+        ' 检查选中单元格是否包含字符串 "SDV-"
+        If InStr(selectedCell.Value, "SDV-") > 0 Then
+          
+        For i = 1 To 3
+            cellValue = ws.Cells(selectedCell.Row, i).Value
+            dataArray(i) = Replace(cellValue, Chr(10), ",")
+        Next i
+        
+        For i = 10 To 18
+         
+                cellValue = ws.Cells(selectedCell.Row, i).Value
+                dataArray(i - 6) = Replace(cellValue, Chr(10), ",")
+          
+            
+        Next i
+                For i = 20 To 22
+            cellValue = ws.Cells(selectedCell.Row, i).Value
+            dataArray(i - 7) = Replace(cellValue, Chr(10), ",")
+        Next i
+
+            ' 弹出提示框
+            MsgBox "选择SDV数据表"
+
+            ' 标记数据已捕获
+            dataCaptured = True
+
+        Else
+            MsgBox "选中单元格不包含字符串 'SDV-'"
+        End If
+
+    Else
+        ' 数据已捕获，进行数据写入
+        ' 切换到目标工作表
+      
+        
+         If InStr(ActiveSheet.Cells(59, 21).Value, "SHUTDOWN") > 0 Then
+                        ' 将数据写入目标单元格
+                        With ActiveSheet
+                            .Cells(1, 28).Value = dataArray(1)
+                            ActiveSheet.Name = dataArray(1)
+                            .Cells(3, 28).Value = dataArray(2)
+                            .Cells(6, 28).Value = dataArray(3)
+                            .Cells(11, 28).Value = dataArray(4) & " cP"
+                            .Cells(8, 28).Value = dataArray(5)
+                            .Cells(9, 28).Value = dataArray(6)
+                            .Cells(8, 44).Value = dataArray(7) & "~" & dataArray(8)
+                            .Cells(10, 28).Value = dataArray(9)
+                            
+                                        tildePos = InStr(dataArray(10), "~")
+                             If tildePos > 0 Then
+                ' 删除 ~ 及其后的所有内容
+                                .Cells(9, 44).Value = Left(dataArray(10), tildePos - 1) & "~" & dataArray(11)
+                           
+                            
+                            Else
+                                .Cells(9, 44).Value = dataArray(10) & "~" & dataArray(11)
+                            End If
+                            .Cells(7, 28).Value = dataArray(12)
+                            .Cells(7, 44).Value = dataArray(13)
+                            
+                                 If InStr(dataArray(14), "ppm") > 0 Then
+                                    .Cells(12, 28).Value = dataArray(14)
+                                    ElseIf dataArray(14) = "" Then
+                                    
+                                     .Cells(12, 28).Value = ""
+                                     Else
+                                    
+                                    .Cells(12, 28).Value = dataArray(14) & "%"
+                            End If
+                            
+                            
+                            If InStr(dataArray(15), "ppm") > 0 Then
+                                    .Cells(12, 44).Value = dataArray(15)
+                                    ElseIf dataArray(15) = "" Then
+                                    
+                                     .Cells(12, 44).Value = ""
+                                     Else
+                                    
+                                    .Cells(12, 44).Value = dataArray(15) & "%"
+                            End If
+                            
+                        
+                           
+            .Cells(1, 28).Interior.Color = RGB(0, 255, 0)
+            .Cells(3, 28).Interior.Color = RGB(0, 255, 0)
+            .Cells(6, 28).Interior.Color = RGB(0, 255, 0)
+            .Cells(11, 28).Interior.Color = RGB(0, 255, 0)
+            .Cells(8, 28).Interior.Color = RGB(0, 255, 0)
+            .Cells(9, 28).Interior.Color = RGB(0, 255, 0)
+            .Cells(8, 44).Interior.Color = RGB(0, 255, 0)
+            .Cells(10, 28).Interior.Color = RGB(0, 255, 0)
+            .Cells(9, 44).Interior.Color = RGB(0, 255, 0)
+            .Cells(7, 28).Interior.Color = RGB(0, 255, 0)
+            .Cells(12, 28).Interior.Color = RGB(0, 255, 0)
+            .Cells(12, 44).Interior.Color = RGB(0, 255, 0)
+            .Cells(7, 44).Interior.Color = RGB(0, 255, 0)
+                        End With
+                        
+                        ' 重置标记，以便下一次可以再次捕获数据
+                        dataCaptured = False
+         End If
+    End If
+End Sub
