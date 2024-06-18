@@ -1,3 +1,4 @@
+
 Sub CopyPRData()
     ' 定义静态变量，用于在多个调用之间保留数据
     Static dataArray(1 To 25) As Variant
@@ -15,7 +16,7 @@ Sub CopyPRData()
     ' 如果尚未捕获数据，进行数据捕获
     If Not dataCaptured Then
         Select Case True
-            Case InStr(selectedCell.Value, "SDV-") > 0
+            Case InStr(selectedCell.Value, "SDV-") > 0 Or InStr(selectedCell.Value, "BDV-") > 0
                 CaptureDataSDV selectedCell, dataArray
                 dataCaptured = True
             Case InStr(selectedCell.Value, "其他条件1") > 0
@@ -49,19 +50,9 @@ Sub CaptureDataSDV(selectedCell As Range, dataArray() As Variant)
     Set ws = ActiveSheet
 
     ' 将选中单元格所在行第1列、第2列、第3列、第10列，第11列到第18列的数据存入数组
-    For i = 1 To 3
+    For i = 1 To 25
         cellValue = ws.Cells(selectedCell.Row, i).Value
         dataArray(i) = Replace(cellValue, Chr(10), ",")
-    Next i
-
-    For i = 10 To 18
-        cellValue = ws.Cells(selectedCell.Row, i).Value
-        dataArray(i - 6) = Replace(cellValue, Chr(10), ",")
-    Next i
-
-    For i = 20 To 22
-        cellValue = ws.Cells(selectedCell.Row, i).Value
-        dataArray(i - 7) = Replace(cellValue, Chr(10), ",")
     Next i
 
     ' 弹出提示框
@@ -79,35 +70,35 @@ Sub WriteDataSDV(dataArray() As Variant)
         ws.Name = dataArray(1)
         .Cells(3, 28).Value = dataArray(2)
         .Cells(6, 28).Value = dataArray(3)
-        .Cells(11, 28).Value = dataArray(4) & " cP"
-        .Cells(8, 28).Value = dataArray(5)
-        .Cells(9, 28).Value = dataArray(6)
-        .Cells(8, 44).Value = dataArray(7) & "~" & dataArray(8)
-        .Cells(10, 28).Value = dataArray(9)
+        .Cells(11, 28).Value = dataArray(10) & " cP"
+        .Cells(8, 28).Value = dataArray(11)
+        .Cells(9, 28).Value = dataArray(12)
+        .Cells(8, 44).Value = dataArray(13) & "~" & dataArray(14)
+        .Cells(10, 28).Value = dataArray(15)
 
-        tildePos = InStr(dataArray(10), "~")
+        tildePos = InStr(dataArray(16), "~")
         If tildePos > 0 Then
-            .Cells(9, 44).Value = Left(dataArray(10), tildePos - 1) & "~" & dataArray(11)
+            .Cells(9, 44).Value = Left(dataArray(16), tildePos - 1) & "~" & dataArray(17)
         Else
-            .Cells(9, 44).Value = dataArray(10) & "~" & dataArray(11)
+            .Cells(9, 44).Value = dataArray(16) & "~" & dataArray(17)
         End If
-        .Cells(7, 28).Value = dataArray(12)
-        .Cells(7, 44).Value = dataArray(13)
+        .Cells(7, 28).Value = dataArray(18)
+        .Cells(7, 44).Value = dataArray(20)
 
-        If InStr(dataArray(14), "ppm") > 0 Then
-            .Cells(12, 28).Value = dataArray(14)
-        ElseIf dataArray(14) = "" Then
+        If InStr(dataArray(21), "ppm") > 0 Then
+            .Cells(12, 28).Value = dataArray(21)
+        ElseIf dataArray(21) = "" Then
             .Cells(12, 28).Value = ""
         Else
-            .Cells(12, 28).Value = dataArray(14) & "%"
+            .Cells(12, 28).Value = dataArray(21) & "%"
         End If
 
-        If InStr(dataArray(15), "ppm") > 0 Then
-            .Cells(12, 44).Value = dataArray(15)
-        ElseIf dataArray(15) = "" Then
+        If InStr(dataArray(22), "ppm") > 0 Then
+            .Cells(12, 44).Value = dataArray(22)
+        ElseIf dataArray(22) = "" Then
             .Cells(12, 44).Value = ""
         Else
-            .Cells(12, 44).Value = dataArray(15) & "%"
+            .Cells(12, 44).Value = dataArray(22) & "%"
         End If
 
         .Cells(1, 28).Interior.Color = RGB(0, 255, 0)
