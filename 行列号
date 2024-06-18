@@ -1,0 +1,22 @@
+Sub ShowCellRowAndColumn()
+    ' 声明变量
+    Dim selectedCell As Range
+    
+    ' 获取当前选中的单元格
+    Set selectedCell = Selection
+    
+    ' 检查是否选择了单元格
+    If selectedCell Is Nothing Then
+        MsgBox "没有选中的单元格。", vbExclamation
+        Exit Sub
+    End If
+    
+    ' 获取行号和列号
+    Dim rowNumber As Long
+    Dim columnNumber As Long
+    rowNumber = selectedCell.Row
+    columnNumber = selectedCell.Column
+    
+    ' 显示行号和列号
+    MsgBox "当前单元格的行号: " & rowNumber & vbCrLf & "当前单元格的列号: " & columnNumber, vbInformation
+End Sub
