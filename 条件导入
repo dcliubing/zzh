@@ -1,0 +1,213 @@
+Sub CopyPRData()
+    ' 定义静态变量，用于在多个调用之间保留数据
+    Static dataArray(1 To 35) As Variant
+    Static dataCaptured As Boolean
+    
+    Dim ws As Worksheet
+    Dim selectedCell As Range
+    Dim i As Integer
+    Dim targetSheet As Worksheet
+    Dim regex As Object
+
+    ' 创建正则表达式对象
+    Set regex = CreateObject("VBScript.RegExp")
+    regex.Global = False
+    regex.IgnoreCase = True
+    regex.Pattern = "[A-Za-z]V-"
+    ' 获取当前工作表和选中单元格
+    Set ws = ActiveSheet
+    Set selectedCell = Selection
+
+    ' 如果尚未捕获数据，进行数据捕获
+    If Not dataCaptured Then
+        Select Case True
+            Case InStr(selectedCell.Value, "SDV-") > 0 Or InStr(selectedCell.Value, "BDV-") > 0
+                CaptureDataSDV selectedCell, dataArray
+                dataCaptured = True
+            Case regex.Test(selectedCell.Value)
+                ' 调用其他子程序
+              CaptureDataSDV selectedCell, dataArray
+                dataCaptured = True
+            Case InStr(selectedCell.Value, "其他条件2") > 0
+                ' 调用其他子程序
+                ' CaptureDataOther2 selectedCell, dataArray
+                dataCaptured = True
+            Case Else
+                MsgBox "选中单元格不包含有效的字符串"
+        End Select
+    Else
+        ' 数据已捕获，进行数据写入
+        Select Case True
+            Case InStr(ActiveSheet.Cells(59, 21).Value, "SHUTDOWN") > 0
+                WriteDataSDV dataArray
+                dataCaptured = False
+            Case InStr(ActiveSheet.Cells(64, 18).Value, "CONTROL VALVE") > 0
+                ' 调用其他子程序
+                 WriteDataPV dataArray
+                dataCaptured = False
+        End Select
+    End If
+End Sub
+
+Sub CaptureDataSDV(selectedCell As Range, dataArray() As Variant)
+    Dim ws As Worksheet
+    Dim i As Integer
+    Set ws = ActiveSheet
+
+    ' 将选中单元格所在行第1列、第2列、第3列、第10列，第11列到第18列的数据存入数组
+    For i = 1 To 35
+        cellValue = ws.Cells(selectedCell.Row, i).Value
+        dataArray(i) = Replace(cellValue, Chr(10), ",")
+    Next i
+
+    ' 弹出提示框
+    MsgBox "选择数据表"
+End Sub
+Sub WriteDataPV(dataArray() As Variant)
+
+On Error Resume Next
+Dim ws As Worksheet
+    Dim tildePos As Integer
+    Set ws = ActiveSheet
+
+    ' 将数据写入目标单元格
+    With ws
+        .Cells(2, 18).Value = dataArray(1)
+        ws.Name = dataArray(1)
+        .Cells(4, 18).Value = dataArray(2)
+        .Cells(9, 18).Value = dataArray(3)
+        .Cells(12, 18).Value = dataArray(12)
+        .Cells(12, 30).Value = dataArray(13)
+        .Cells(13, 18).Value = dataArray(11)
+        .Cells(16, 21).Value = dataArray(14)
+        .Cells(16, 28).Value = dataArray(20)
+        .Cells(16, 31).Value = dataArray(26)
+        .Cells(15, 21).Value = dataArray(17)
+        .Cells(15, 28).Value = dataArray(23)
+        .Cells(15, 31).Value = dataArray(29)
+        .Cells(17, 21).Value = dataArray(15)
+        .Cells(17, 28).Value = dataArray(21)
+        .Cells(17, 31).Value = dataArray(27)
+        .Cells(18, 21).Value = dataArray(16)
+        .Cells(18, 28).Value = dataArray(22)
+        .Cells(18, 31).Value = dataArray(28)
+        .Cells(19, 21).Value = dataArray(6)
+        .Cells(19, 28).Value = dataArray(6)
+        .Cells(19, 31).Value = dataArray(6)
+          .Cells(20, 21).Value = dataArray(8)
+        .Cells(20, 28).Value = dataArray(8)
+        .Cells(20, 31).Value = dataArray(8)
+            .Cells(22, 21).Value = dataArray(7)
+        .Cells(22, 28).Value = dataArray(7)
+        .Cells(22, 31).Value = dataArray(7)
+              .Cells(21, 21).Value = dataArray(10)
+        .Cells(21, 28).Value = dataArray(10)
+        .Cells(21, 31).Value = dataArray(10)
+              .Cells(23, 21).Value = dataArray(32)
+        .Cells(23, 28).Value = dataArray(32)
+        .Cells(23, 31).Value = dataArray(32)
+        
+               .Cells(24, 21).Value = dataArray(33)
+        .Cells(24, 28).Value = dataArray(33)
+        .Cells(24, 31).Value = dataArray(33)
+        
+             .Cells(2, 18).Interior.Color = RGB(0, 255, 0)
+     
+        .Cells(4, 18).Interior.Color = RGB(0, 255, 0)
+        .Cells(9, 18).Interior.Color = RGB(0, 255, 0)
+        .Cells(12, 18).Interior.Color = RGB(0, 255, 0)
+        .Cells(12, 30).Interior.Color = RGB(0, 255, 0)
+        .Cells(13, 18).Interior.Color = RGB(0, 255, 0)
+        .Cells(16, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(16, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(16, 31).Interior.Color = RGB(0, 255, 0)
+        .Cells(15, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(15, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(15, 31).Interior.Color = RGB(0, 255, 0)
+        .Cells(17, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(17, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(17, 31).Interior.Color = RGB(0, 255, 0)
+        .Cells(18, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(18, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(18, 31).Interior.Color = RGB(0, 255, 0)
+        .Cells(19, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(19, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(19, 31).Interior.Color = RGB(0, 255, 0)
+          .Cells(20, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(20, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(20, 31).Interior.Color = RGB(0, 255, 0)
+            .Cells(22, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(22, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(22, 31).Interior.Color = RGB(0, 255, 0)
+              .Cells(21, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(21, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(21, 31).Interior.Color = RGB(0, 255, 0)
+              .Cells(23, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(23, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(23, 31).Interior.Color = RGB(0, 255, 0)
+        
+               .Cells(24, 21).Interior.Color = RGB(0, 255, 0)
+        .Cells(24, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(24, 31).Interior.Color = RGB(0, 255, 0)
+
+
+
+    End With
+End Sub
+Sub WriteDataSDV(dataArray() As Variant)
+    Dim ws As Worksheet
+    Dim tildePos As Integer
+    Set ws = ActiveSheet
+
+    ' 将数据写入目标单元格
+    With ws
+        .Cells(1, 28).Value = dataArray(1)
+        ws.Name = dataArray(1)
+        .Cells(3, 28).Value = dataArray(2)
+        .Cells(6, 28).Value = dataArray(3)
+        .Cells(11, 28).Value = dataArray(10) & " cP"
+        .Cells(8, 28).Value = dataArray(11)
+        .Cells(9, 28).Value = dataArray(12)
+        .Cells(8, 44).Value = dataArray(13) & "~" & dataArray(14)
+        .Cells(10, 28).Value = dataArray(15)
+
+        tildePos = InStr(dataArray(16), "~")
+        If tildePos > 0 Then
+            .Cells(9, 44).Value = Left(dataArray(16), tildePos - 1) & "~" & dataArray(17)
+        Else
+            .Cells(9, 44).Value = dataArray(16) & "~" & dataArray(17)
+        End If
+        .Cells(7, 28).Value = dataArray(18)
+        .Cells(7, 44).Value = dataArray(20)
+
+        If InStr(dataArray(21), "ppm") > 0 Then
+            .Cells(12, 28).Value = dataArray(21)
+        ElseIf dataArray(21) = "" Then
+            .Cells(12, 28).Value = ""
+        Else
+            .Cells(12, 28).Value = dataArray(21) & "%"
+        End If
+
+        If InStr(dataArray(22), "ppm") > 0 Then
+            .Cells(12, 44).Value = dataArray(22)
+        ElseIf dataArray(22) = "" Then
+            .Cells(12, 44).Value = ""
+        Else
+            .Cells(12, 44).Value = dataArray(22) & "%"
+        End If
+
+        .Cells(1, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(3, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(6, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(11, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(8, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(9, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(8, 44).Interior.Color = RGB(0, 255, 0)
+        .Cells(10, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(9, 44).Interior.Color = RGB(0, 255, 0)
+        .Cells(7, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(12, 28).Interior.Color = RGB(0, 255, 0)
+        .Cells(12, 44).Interior.Color = RGB(0, 255, 0)
+        .Cells(7, 44).Interior.Color = RGB(0, 255, 0)
+    End With
+End Sub
