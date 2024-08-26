@@ -39,7 +39,186 @@
         j = j + 1
     Next Key
 End Sub
+Sub CopyDataToSelectedCell333()
+    Dim startCell As Range
+    Dim endCell As Range
+    Dim startSheetIndex As Integer
+    Dim dataArray() As Variant
+    Dim selectedCell As Range
+    Dim i As Integer
+    Dim ws As Worksheet
+    Dim currentSheet As Worksheet
 
+    On Error Resume Next
+
+    Application.DisplayAlerts = False ' 关闭警告消息框
+    Set currentSheet = ActiveSheet
+    For Each sh In Worksheets
+        sh.Select
+        If sh.Visible = xlSheetHidden Then
+            sh.Visible = xlSheetVisible
+            sh.Delete
+        End If
+    Next
+    Application.DisplayAlerts = True ' 恢复警告消息框
+
+    currentSheet.Activate
+
+    ' 选择第一个单元格
+    On Error Resume Next
+    Set startCell = Application.InputBox("请选择要复制数据的起始单元格:", Type:=8)
+    On Error GoTo 0
+
+    If startCell Is Nothing Then
+        Exit Sub
+    End If
+
+    ' 选择第二个单元格
+    On Error Resume Next
+    Set endCell = Application.InputBox("请选择要粘贴数据的起始单元格:", Type:=8)
+    On Error GoTo 0
+
+    If endCell Is Nothing Then
+        Exit Sub
+    End If
+
+    ' 输入要开始的工作表编号，默认值是当前工作表索引
+    startSheetIndex = InputBox("请输入要开始的工作表编号:", "工作表编号", currentSheet.Index)
+
+    ' 防止无效的工作表编号
+    If startSheetIndex < 1 Or startSheetIndex > Sheets.Count Then
+        MsgBox "无效的工作表编号!"
+        Exit Sub
+    End If
+
+    ' 将数据存储到数组中
+    ReDim dataArray(1 To Sheets.Count - startSheetIndex + 1)
+
+    For i = startSheetIndex To Sheets.Count
+        dataArray(i - startSheetIndex + 1) = Sheets(i).Cells(startCell.Row, startCell.Column).value
+    Next i
+
+    ' 写入数据到目标单元格列
+    Set selectedCell = endCell
+    For i = LBound(dataArray) To UBound(dataArray)
+        selectedCell.value = dataArray(i)
+        Set selectedCell = selectedCell.Offset(1, 0)
+    Next i
+
+End Sub
+
+
+
+
+Sub CopyDataToFirstSheet()
+    Dim ws As Worksheet
+    Dim firstSheet As Worksheet
+    Dim rowToPaste As Long
+    Dim colToPaste As Long
+    Dim cellValue As Variant
+    
+    ' 设置第一个工作表作为目标工作表
+    Set firstSheet = ActiveWorkbook.Sheets(1)
+    
+    ' 初始化写入数据的行和列
+    rowToPaste = 3
+    colToPaste = 20
+    
+    ' 循环遍历每个工作表
+    For Each ws In ActiveWorkbook.Worksheets
+        ' 跳过第一个工作表（目标工作表）
+     
+            ' 获取当前工作表第3行第8列单元格的值
+            cellValue = ws.Cells(3, 8).value
+            
+            ' 将单元格的值写入目标工作表的指定位置
+            firstSheet.Cells(rowToPaste, colToPaste).value = cellValue
+            
+            ' 增加写入行数
+            rowToPaste = rowToPaste + 1
+   
+    Next ws
+End Sub
+
+Sub Fill1IfMatch()
+    Dim lastRow As Long
+    Dim i As Long, j As Long
+    Dim ws As Worksheet
+    Dim matchRange As Range
+    
+    '设置工作表和搜索范围
+    Set ws = ActiveSheet
+    lastRow = ws.Cells(ws.Rows.Count, "P").End(xlUp).Row
+    Set matchRange = ws.Range("F2:J2")
+    
+    '循环遍历每一行，如果P列有数据，就检查是否匹配
+    For i = 2 To lastRow
+        If ws.Cells(i, "P").value <> "" Then '如果P列有数据
+            For j = 1 To 5 '遍历搜索范围
+                If ws.Cells(i, "P").value = matchRange.Cells(1, j).value Then '如果匹配
+                    ws.Cells(i, matchRange.Cells(1, j).Column).value = 1 '在相同数据所在列对应的当前行单元格内填充数字1
+                    Exit For '找到一次匹配就退出循环
+                End If
+            Next j
+        End If
+    Next i
+End Sub
+Sub CompareData()
+    Dim lastRow As Long
+    Dim i As Long, j As Long, k As Long
+    Dim uData As String, bData As String, vData As String
+    
+    lastRow = ActiveSheet.Cells(Rows.Count, "U").End(xlUp).Row
+    
+    For i = 2 To lastRow
+        If Not IsEmpty(Range("U" & i)) Then
+            uData = Range("U" & i)
+            vData = Range("V" & i)
+            
+            For j = 2 To lastRow
+                If Not IsEmpty(Range("B" & j)) Then
+                    bData = Range("B" & j)
+                    
+                    If uData = bData Then
+                        For k = 5 To 9
+                            If vData = Range(Cells(2, k), Cells(2, k)).value Then
+                                Range(Cells(j, k), Cells(j, k)).value = Range("X" & i).value
+                            End If
+                        Next k
+                    End If
+                End If
+            Next j
+        End If
+    Next i
+End Sub
+Sub 电缆长度()
+For Each cell In Selection
+
+If cell.value <> "" And InStr(cell.Offset(, -9).value, "-JB") = 0 And InStr(cell.Offset(, -6).value, "-JB") > 0 Then
+
+
+    If InStr(cell.Offset(, -9).value, "-FD") > 0 Or InStr(cell.Offset(, -9).value, "-GD") > 0 Or InStr(cell.Offset(, -9).value, "-HD") > 0 Or InStr(cell.Offset(, -9).value, "-TD") > 0 Or InStr(cell.Offset(, -9).value, "-MAC") > 0 Then
+
+            cell.value = 50
+            
+            
+            Else
+            
+            
+            cell.value = 35
+
+    
+    End If
+
+
+End If
+
+    Next
+    
+
+
+
+End Sub
  Sub 安装图材料()
    Application.ScreenUpdating = False
     Dim i As Long, j As Long
@@ -700,6 +879,87 @@ Next
     End If
     Application.ScreenUpdating = True
 End Sub
+Sub CompareColumnsAndHighlightDifferentCellsOptimized()
+
+    Application.ScreenUpdating = False
+    
+    Dim ws As Worksheet
+    Dim rng1 As Range, rng2 As Range, combinedRange As Range
+    Dim cell As Range
+    Dim diffCells As Range
+    Dim dict1 As Object, dict2 As Object
+    Dim lastRow1 As Long, lastRow2 As Long, lastRowCombined As Long
+    
+    ' Set the worksheet where the data is located
+    Set ws = ActiveSheet ' Change this to the desired worksheet
+    
+    ' Find the last used row in each column
+    lastRow1 = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+    lastRow2 = ws.Cells(ws.Rows.Count, "B").End(xlUp).Row
+    
+    ' Determine the maximum number of rows between the two columns
+    lastRowCombined = Application.WorksheetFunction.Max(lastRow1, lastRow2)
+    
+    ' Set the ranges for the two columns to be compared (change the ranges as needed)
+    Set rng1 = ws.Range("A1:A" & lastRowCombined) ' Change this to the first column range
+    Set rng2 = ws.Range("B1:B" & lastRowCombined) ' Change this to the second column range
+    
+    ' Combine the two ranges into a single range
+    Set combinedRange = Union(rng1, rng2)
+    
+    ' Clear any previous highlighting
+    ws.Cells.Interior.ColorIndex = xlNone
+    
+    ' Create dictionaries to store the values in both columns
+    Set dict1 = CreateObject("Scripting.Dictionary")
+    Set dict2 = CreateObject("Scripting.Dictionary")
+    
+    ' Loop through each cell in the combined range and add values to dict1 and dict2
+    For Each cell In combinedRange
+        If cell.Column = 1 Then
+            dict1(cell.value) = 1
+        Else
+            dict2(cell.value) = 1
+        End If
+    Next cell
+    
+    ' Find the unique values in the first column that don't exist in the second column
+    For Each cell In rng1
+        If Not dict2.exists(cell.value) Then
+            ' Highlight the different cell with yellow color
+            If diffCells Is Nothing Then
+                Set diffCells = cell
+            Else
+                Set diffCells = Union(diffCells, cell)
+            End If
+        End If
+    Next cell
+    
+    ' Find the unique values in the second column that don't exist in the first column
+    For Each cell In rng2
+        If Not dict1.exists(cell.value) Then
+            ' Highlight the different cell with yellow color
+            If diffCells Is Nothing Then
+                Set diffCells = cell
+            Else
+                Set diffCells = Union(diffCells, cell)
+            End If
+        End If
+    Next cell
+    
+    ' Highlight the different cells with yellow color
+    If Not diffCells Is Nothing Then
+        diffCells.Interior.Color = RGB(255, 255, 0) ' Yellow color
+    Else
+        MsgBox "未发现区别"
+    End If
+    
+    Application.ScreenUpdating = True
+End Sub
+
+
+
+
 
 Sub 多行列墙贴()
 Application.ScreenUpdating = False
@@ -1216,7 +1476,7 @@ Sub dsmch()
 Dim arr, arr2, brr, d, i&, s&, zf$
 Set d = CreateObject("scripting.dictionary")
 
-For ii = 13 To 25
+For ii = 13 To 27
     Columns(ii).Clear
     'Columns(ii).NumberFormatLocal = "@"
 Next ii
@@ -1226,7 +1486,7 @@ arr = Range(Cells(1, 1), Cells(lrow, lcol))
 arr2 = Range(Cells(1, 1), Cells(lrow, lcol - 1))
 
 ReDim brr(1 To lrow, 1 To lcol)
-For i = 2 To lrow
+For i = 1 To lrow
 
 
     zf = Join(Application.Index(arr2, i), ",")
