@@ -1,0 +1,50 @@
+Dim objShell, objFolder, objExcel, objWorkbook
+Dim fso, inputFile, outputFile
+Dim folderPath, folder
+
+' 创建 Shell 对象和 Excel 对象
+Set objShell = CreateObject("Shell.Application")
+Set objExcel = CreateObject("Excel.Application")
+objExcel.Visible = False
+
+' 显示文件夹选择对话框
+Set objFolder = objShell.BrowseForFolder(0, "请选择包含 Excel 文件的目录", 0, &H00)
+If Not objFolder Is Nothing Then
+    folderPath = objFolder.Self.Path
+Else
+    WScript.Echo "没有选择目录，退出脚本。"
+    WScript.Quit
+End If
+
+' 创建文件系统对象
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+' 遍历目录中的所有 Excel 文件
+For Each file In fso.GetFolder(folderPath).Files
+    If LCase(fso.GetExtensionName(file.Path)) = "xlsx" Or LCase(fso.GetExtensionName(file.Path)) = "xls" Then
+        inputFile = file.Path
+        outputFile = Replace(inputFile, ".xlsx", ".pdf")
+        outputFile = Replace(outputFile, ".xls", ".pdf")
+
+        ' 打开工作簿
+        Set objWorkbook = objExcel.Workbooks.Open(inputFile)
+
+        ' 将工作簿另存为 PDF
+        objWorkbook.ExportAsFixedFormat 0, outputFile
+
+        ' 关闭工作簿
+        objWorkbook.Close False
+        Set objWorkbook = Nothing
+    End If
+Next
+
+' 退出 Excel
+objExcel.Quit
+
+' 清理
+Set objExcel = Nothing
+Set objFolder = Nothing
+Set objShell = Nothing
+Set fso = Nothing
+
+WScript.Echo "所有文件已成功转换为 PDF。"
