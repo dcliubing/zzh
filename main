@@ -39,6 +39,42 @@
         j = j + 1
     Next Key
 End Sub
+Sub SplitCellContent分隔图纸目录()
+
+ Dim cell As Range
+    Dim parts() As String
+    
+    ' Check if the selection is either a single cell or a multi-row single-column range
+    If Selection.Columns.Count > 1 Or Selection.Rows.Count = Application.Rows.Count Then
+        MsgBox "请选择多行单列或单个单元格。", vbExclamation
+        Exit Sub
+    End If
+    
+    ' Loop through each selected cell
+    For Each cell In Selection
+        ' Check if the cell is not empty
+        If Not IsEmpty(cell.value) Then
+            ' Check if the cell contains a space
+            If InStr(cell.value, " ") > 0 Then
+                ' Split the cell content by the first space
+                parts = Split(cell.value, " ", 2)
+                
+                ' Write the first part to the cell in the next column
+                cell.Offset(0, 1).value = parts(0)
+                
+                ' If there is a second part, write it to the cell two columns to the right
+                If UBound(parts) > 0 Then
+                    cell.Offset(0, 2).value = parts(1)
+                End If
+            Else
+                ' If no space is found, copy the entire content to the next column
+                cell.Offset(0, 1).value = cell.value
+            End If
+        End If
+    Next cell
+
+End Sub
+
 Sub CopyDataToSelectedCell333()
     Dim startCell As Range
     Dim endCell As Range
@@ -261,6 +297,21 @@ Sub 选定区域去重()
     ' 获取选定区域
     Set dataRange = Application.Selection
 
+    ' 检查是否选择了无效的区域
+    If dataRange.Columns.Count = 1 And dataRange.Rows.Count = 1 Then
+        MsgBox "请选择多行单列或多个单元格区域。", vbExclamation
+        Exit Sub
+    ElseIf dataRange.Rows.Count = Application.Rows.Count Or dataRange.Columns.Count = Application.Columns.Count Then
+        MsgBox "请选择适当区域，不要选择整行或整列。", vbExclamation
+        Exit Sub
+    ElseIf dataRange.Rows.Count = Application.Rows.Count And dataRange.Columns.Count > 1 Then
+        MsgBox "请选择适当区域，不要选择多个整列。", vbExclamation
+        Exit Sub
+    ElseIf dataRange.Columns.Count = Application.Columns.Count And dataRange.Rows.Count > 1 Then
+        MsgBox "请选择适当区域，不要选择多个整行。", vbExclamation
+        Exit Sub
+    End If
+
     ' 读取选定区域的数据
     dataArray = dataRange.value
 
@@ -269,8 +320,8 @@ Sub 选定区域去重()
 
     ' 将数据数组中的每一个数据项作为键值对存储到字典中
     For Each dataValue In dataArray
-    If Not IsEmpty(dataValue) Then
-        dataDict(dataValue) = True
+        If Not IsEmpty(dataValue) Then
+            dataDict(dataValue) = True
         End If
     Next dataValue
 
@@ -280,6 +331,7 @@ Sub 选定区域去重()
     ' 将字典中的键值列表写入目标单元格
     targetCell.Resize(dataDict.Count, 1).value = Application.Transpose(dataDict.Keys)
 End Sub
+
 
 Sub 去重统计()
     Dim dict As Object ' 定义一个字典对象，用于去重
@@ -318,19 +370,43 @@ Sub 去重统计()
 End Sub
 
 Sub 重复查询()
-Dim rng As Range, cell As Range
-Application.ScreenUpdating = False
-Set rng = Selection
+    Dim rng As Range, cell As Range
+
+    ' Check if the selection is invalid (single cell, entire row/column, or multiple rows/columns)
+    If Selection.Columns.Count = 1 And Selection.Rows.Count = 1 Then
+        MsgBox "请选择适当区域，不要选择单个单元格。", vbExclamation
+        Exit Sub
+    ElseIf Selection.Rows.Count = Application.Rows.Count Or Selection.Columns.Count = Application.Columns.Count Then
+        MsgBox "请选择适当区域，不要选择整行或整列。", vbExclamation
+        Exit Sub
+    ElseIf Selection.Rows.Count = Application.Rows.Count And Selection.Columns.Count > 1 Then
+        MsgBox "请选择适当区域，不要选择多个整列。", vbExclamation
+        Exit Sub
+    ElseIf Selection.Columns.Count = Application.Columns.Count And Selection.Rows.Count > 1 Then
+        MsgBox "请选择适当区域，不要选择多个整行。", vbExclamation
+        Exit Sub
+    End If
+
+    Application.ScreenUpdating = False
+    Set rng = Selection
+    
+    ' Clear any previous highlighting
     With Selection.Interior
         .Pattern = xlNone
         .TintAndShade = 0
         .PatternTintAndShade = 0
     End With
-For Each cell In rng
-If Application.WorksheetFunction.CountIf(rng, cell) > 1 Then cell.Interior.ColorIndex = 6
-Next
-Application.ScreenUpdating = True
+
+    ' Loop through each cell in the selection to find duplicates
+    For Each cell In rng
+        If Application.WorksheetFunction.CountIf(rng, cell) > 1 Then
+            cell.Interior.ColorIndex = 6
+        End If
+    Next cell
+    
+    Application.ScreenUpdating = True
 End Sub
+
 
 Sub 数据去重()
   Dim arr, brr, a%, b%, Str1, Str2
@@ -1007,7 +1083,21 @@ Exit Sub
 
 End If
 
-
+    If Selection.Columns.Count = 1 And Selection.Rows.Count = 1 Then
+        MsgBox "请选择多行多列的区域，不要选择单个单元格。", vbExclamation
+        Exit Sub
+    ElseIf Selection.Rows.Count = Application.Rows.Count Then
+        MsgBox "请选择适当区域，不要选择整行。", vbExclamation
+        Exit Sub
+    ElseIf Selection.Columns.Count = Application.Columns.Count Then
+        MsgBox "请选择适当区域，不要选择整列。", vbExclamation
+        Exit Sub
+    ElseIf Selection.Rows.Count > 1 And Selection.Columns.Count > 1 Then
+        ' Handle multiple rows and columns case
+    Else
+        MsgBox "请选择多行多列的区域。", vbExclamation
+        Exit Sub
+    End If
 toi = 0
 Do
 
@@ -1129,6 +1219,112 @@ End If
 'Range("ab1").Resize(UBound(arr)) = arr
 
 End Sub
+Sub 多行列墙贴2()
+    Application.ScreenUpdating = False
+
+    Dim hang As Integer, hangs As Integer, colns As Integer, colnss As Integer
+    Dim toj As Integer, huan As Integer, ii As Integer, iit As Integer
+    Dim sh As Integer, shi As Integer, sht As Integer
+    Dim senu As Integer, toi As Integer, hangchu As Integer, bay As Integer
+    Dim arr100() As Variant, arr55 As Variant, arr66() As Variant
+    Dim arr3 As Variant
+
+    On Error Resume Next
+
+    ' 检查选择区域是否有效
+    If Not IsValidSelection(Selection) Then
+        MsgBox "请选择适当区域，不要选择单个单元格、一整列、一整行或多个整列/整行。", vbExclamation
+        Exit Sub
+    End If
+
+    ' 获取选定区域的属性
+    hang = Selection.Row
+    ii = Selection.Column
+    colnss = Selection.Columns.Count
+    sht = 0
+    toj = 0
+
+    ' 初始化 arr100 数组
+    ReDim arr100(1 To colnss)
+
+    ' 获取每个区域的列数
+    Do
+        huan = ActiveSheet.Cells(hang, ii).MergeArea.Columns.Count
+        arr100(sht + 1) = toj + 1
+        toj = toj + huan
+        sht = sht + 1
+        ii = ii + huan
+    Loop Until toj >= colnss
+
+    ' 存储选择的值
+    arr55 = Selection.value
+    senu = Selection.Rows.Count
+    sh = 0
+    hangs = hang + senu - 1
+    ReDim arr66(0 To senu - 1)
+
+    ' 获取区域内的值
+    For hang = hang To hangs
+        arr66(sh) = ActiveSheet.Cells(hang, Selection.Column)
+        sh = sh + 1
+    Next hang
+
+    ' 确认粘贴操作
+    If MsgBox("是否确定粘贴", vbOKCancel) = vbCancel Then
+        Erase arr66
+        Exit Sub
+    End If
+
+    hang = Selection.Row
+    ii = Selection.Column
+
+    ' 粘贴数据
+    For toi = sht - 1 To 0 Step -1
+        huan = ActiveSheet.Cells(hang, ii).MergeArea.Columns.Count
+        arr3 = WorksheetFunction.Index(arr55, 0, arr100(toi + 1))
+
+        hangchu = hang
+        bay = senu
+
+        If senu = 1 Then
+            ActiveSheet.Cells(hang, ii).value = arr3(1)
+        Else
+            For senu = senu To 1 Step -1
+                ActiveSheet.Cells(hang, ii).value = arr3(shi, 1)
+                shi = shi + 1
+                hang = hang + ActiveSheet.Cells(hang, ii).MergeArea.Rows.Count
+            Next senu
+        End If
+
+        shi = 1
+        hang = hangchu
+        senu = bay
+        sht = sht - 1
+        ii = ii + huan
+    Next toi
+
+    ' 清除数组
+    Erase arr55
+    Erase arr66
+
+    Application.ScreenUpdating = True
+End Sub
+
+Function IsValidSelection(rng As Range) As Boolean
+    ' 判断选择区域的有效性
+    If rng.Columns.Count = 1 And rng.Rows.Count = 1 Then
+        IsValidSelection = False
+    ElseIf rng.Rows.Count = Application.Rows.Count Then
+        IsValidSelection = False
+    ElseIf rng.Columns.Count = Application.Columns.Count Then
+        IsValidSelection = False
+    ElseIf rng.Rows.Count > 1 And rng.Columns.Count > 1 Then
+        IsValidSelection = True
+    Else
+        IsValidSelection = True
+    End If
+End Function
+
 
 Sub 页面设置()
 '
