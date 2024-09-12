@@ -1,0 +1,61 @@
+Dim objShell, objFolder, objWord, objDoc
+Dim fso, inputFile, folderPath
+Dim oldText, newText
+
+' 创建 Shell 对象和 Word 对象
+Set objShell = CreateObject("Shell.Application")
+Set objWord = CreateObject("Word.Application")
+objWord.Visible = False ' 隐藏 Word 窗口
+
+' 显示文件夹选择对话框
+Set objFolder = objShell.BrowseForFolder(0, "请选择包含 Word 文件的目录", 0)
+If Not objFolder Is Nothing Then
+    folderPath = objFolder.Self.Path
+Else
+    WScript.Echo "没有选择目录，退出脚本。"
+    WScript.Quit
+End If
+
+' 获取要替换的文本
+oldText = InputBox("请输入要替换的原文本：")
+newText = InputBox("请输入新的文本：")
+
+' 创建文件系统对象
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+' 遍历文件夹中的所有 Word 文件
+For Each file In fso.GetFolder(folderPath).Files
+    If LCase(fso.GetExtensionName(file.Path)) = "docx" Or LCase(fso.GetExtensionName(file.Path)) = "doc" Then
+        inputFile = file.Path
+        
+        ' 打开 Word 文档
+        Set objDoc = objWord.Documents.Open(inputFile)
+
+        ' 替换文本
+        objDoc.Content.Find.ClearFormatting
+        objDoc.Content.Find.Replacement.ClearFormatting
+
+        With objDoc.Content.Find
+            .Text = oldText
+            .Replacement.Text = newText
+            .Forward = True
+            .Wrap = 1 ' wdFindContinue
+            .Execute , , , , , , , , , , 2 ' Replace all matches
+        End With
+
+        ' 保存并关闭文档
+        objDoc.Save
+        objDoc.Close False
+    End If
+Next
+
+' 退出 Word
+objWord.Quit
+
+' 清理对象
+Set objWord = Nothing
+Set objFolder = Nothing
+Set objShell = Nothing
+Set fso = Nothing
+
+WScript.Echo "所有文件中的文本已成功替换。"
